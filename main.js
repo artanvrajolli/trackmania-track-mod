@@ -198,6 +198,12 @@ ipcMain.handle('open-trackmania', async (event, mapId) => {
     }
 });
 
+ipcMain.handle('is-map-cached', async (event, mapId) => {
+    const tempDir = path.join(os.tmpdir(), 'trackmania-maps');
+    const mapPath = path.join(tempDir, `${mapId}.Map.Gbx`);
+    return fs.existsSync(mapPath);
+});
+
 ipcMain.handle('open-map-direct', async (event, mapId) => {
     const commonPaths = [
         'C:\\Program Files (x86)\\Steam\\steamapps\\common\\Trackmania\\Trackmania.exe',

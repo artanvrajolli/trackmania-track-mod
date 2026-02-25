@@ -31,39 +31,281 @@
             text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
         }
 
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+        .header p {
+            color: #888;
+            margin-top: 5px;
+            font-size: 0.9em;
         }
 
-        .controls input, .controls select {
-            padding: 10px 15px;
-            border: 1px solid #00d9ff;
-            border-radius: 5px;
+        /* Modern Filter Bar */
+        .filter-bar {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .filter-bar-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group-label {
+            color: #888;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 1px solid rgba(0, 217, 255, 0.4);
+            border-radius: 6px;
             background: rgba(0, 0, 0, 0.5);
             color: #e0e0e0;
-            font-size: 14px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .controls button {
-            padding: 10px 25px;
+        .filter-bar select:hover {
+            border-color: #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+        }
+
+        .filter-bar select:focus {
+            outline: none;
+            border-color: #00d9ff;
+        }
+
+        .sort-btn {
+            padding: 6px 10px;
+            border: 1px solid rgba(0, 217, 255, 0.4);
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-btn:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        .sort-btn.active {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        .filter-bar input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid rgba(0, 217, 255, 0.4);
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #e0e0e0;
+            font-size: 13px;
+            width: 150px;
+            transition: all 0.2s;
+        }
+
+        .filter-bar input[type="text"]:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.2);
+        }
+
+        .filter-bar input[type="text"]::placeholder {
+            color: #666;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            transition: all 0.2s;
+        }
+
+        .toggle-container:hover {
+            border-color: rgba(0, 217, 255, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 22px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 22px;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: #666;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-container.active {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+        }
+
+        .toggle-container.active .toggle-switch {
+            background: rgba(0, 255, 136, 0.3);
+            border-color: #00ff88;
+        }
+
+        .toggle-container.active .toggle-switch::after {
+            left: 24px;
+            background: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .toggle-label {
+            font-size: 0.85em;
+            color: #aaa;
+            transition: color 0.3s;
+        }
+
+        .toggle-container.active .toggle-label {
+            color: #00ff88;
+        }
+
+        /* Quick Filter Chips */
+        .quick-filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 6px 14px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #aaa;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-chip:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: rgba(0, 217, 255, 0.2);
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+        .filter-chip-icon {
+            font-size: 1.1em;
+        }
+
+        /* Stats Display */
+        .filter-stats {
+            display: flex;
+            gap: 15px;
+            margin-left: auto;
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 217, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #00d9ff;
+        }
+
+        .stat-label {
+            font-size: 0.65em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-item.cached .stat-value {
+            color: #00ff88;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            padding: 8px 16px;
             background: linear-gradient(135deg, #00d9ff, #0099cc);
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             color: #1a1a2e;
             font-weight: bold;
+            font-size: 13px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .controls button:hover {
+        .refresh-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 217, 255, 0.4);
         }
 
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .refresh-btn .refresh-icon {
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+
+        .refresh-btn.loading .refresh-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Loading & Error */
         .loading {
             text-align: center;
             padding: 50px;
@@ -92,6 +334,7 @@
             border: 1px solid #ff6b6b;
         }
 
+        /* Maps Grid */
         .maps-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -108,6 +351,7 @@
             border: 1px solid rgba(0, 217, 255, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
+            position: relative;
         }
 
         .map-card:hover {
@@ -205,6 +449,29 @@
             background: rgba(0, 217, 255, 0.1);
         }
 
+        .cached-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 136, 0.9);
+            color: #000;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .cached-icon {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+
+        /* Progress Overlay */
         .progress-overlay {
             position: fixed;
             top: 0;
@@ -252,24 +519,75 @@
             color: #aaa;
             font-size: 0.9em;
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filter-bar-inner {
+                justify-content: center;
+            }
+            
+            .filter-stats {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Trackmania Map Viewer</h1>
-        <p>Ubisoft Nadeo Maps</p>
+        <h1>🏁 Trackmania Map Viewer</h1>
+        <p>Ubisoft Nadeo Official Maps</p>
     </div>
 
-    <div class="controls">
-        <input type="text" id="searchInput" placeholder="Search maps...">
-        <select id="sortSelect">
-            <option value="natural" selected>Sort by Number (1, 2, ..., 10)</option>
-            <option value="name">Sort by Name (A-Z)</option>
-            <option value="downloads">Sort by Downloads</option>
-            <option value="awards">Sort by Awards</option>
-            <option value="difficulty">Sort by Difficulty</option>
-        </select>
-        <button onclick="fetchMaps()">Refresh Maps</button>
+    <!-- Modern Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-bar-inner">
+            <!-- Year Filter -->
+            <div class="filter-group">
+                <span class="filter-group-label">📅 Year</span>
+                <select id="yearRange" title="Select year"></select>
+            </div>
+
+            <!-- Search Input -->
+            <div class="filter-group">
+                <span class="filter-group-label">🔍 Search</span>
+                <input type="text" id="searchInput" placeholder="Map name..." oninput="applyFilters()">
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="filter-group">
+                <span class="filter-group-label">↕️ Sort</span>
+                <select id="sortSelect" onchange="applyFilters()">
+                    <option value="mapId" selected>Map ID</option>
+                    <option value="natural">Number (1, 2, ..., 10)</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="downloads">Downloads</option>
+                    <option value="awards">Awards</option>
+                    <option value="difficulty">Difficulty</option>
+                </select>
+                <button class="sort-btn asc" id="sortAscBtn" onclick="setSortDirection('asc')" title="Ascending">↑</button>
+                <button class="sort-btn desc" id="sortDescBtn" onclick="setSortDirection('desc')" title="Descending">↓</button>
+            </div>
+
+            <!-- Cached Only Toggle -->
+            <div class="toggle-container" id="cachedToggle" onclick="toggleCachedOnly()" title="Show only cached maps">
+                <div class="toggle-switch"></div>
+                <span class="toggle-label">💾 Cached Only</span>
+            </div>
+
+            <!-- Stats -->
+            <div class="filter-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalMapsCount">0</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="filteredMapsCount">0</span>
+                    <span class="stat-label">Showing</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="content">
@@ -287,24 +605,148 @@
     </div>
 
     <script>
-        const API_URL = 'https://trackmania.exchange/api/maps?author=Ubisoft+Nadeo&order1=6&uploadedbefore=2026-12-31&uploadedafter=2024-01-01&count=40&fields=MapId%2CMapUid%2CName%2CAuthors%5B%5D%2CEnvironment%2CType%2CTags%5B%5D%2CLength%2CDifficulty%2CRoutes%2CAwardCount%2CDownloadCount%2CReplayCount%2CTrackValue%2CIsPublic%2CIsListed%2CVehicle%2CVehicleName%2CHasImages%2CReplayType%2CHasCoauthorRequest%2CAuthorBeaten%2COnlineWR';
-
+        const API_URL_BASE = 'https://trackmania.exchange/api/maps';
+        const DEFAULT_PARAMS = 'author=Ubisoft+Nadeo&order1=6&count=1000&fields=MapId%2CMapUid%2CName%2CAuthors%5B%5D%2CEnvironment%2CType%2CTags%5B%5D%2CLength%2CDifficulty%2CRoutes%2CAwardCount%2CDownloadCount%2CReplayCount%2CTrackValue%2CIsPublic%2CIsListed%2CVehicle%2CVehicleName%2CHasImages%2CReplayType%2CHasCoauthorRequest%2CAuthorBeaten%2COnlineWR';
+        
         let allMaps = [];
+        let cachedMapsIds = new Set();
+        let isCachedOnly = false;
+        let sortDirection = 'asc';
+
+        // Set default year range and populate dropdown
+        function setDefaultYearRange() {
+            const currentYear = new Date().getFullYear();
+            const yearRangeSelect = document.getElementById('yearRange');
+            
+            // Add "All Years" option
+            yearRangeSelect.add(new Option('📅 All Years', ''));
+            
+            // Populate individual year options from 2020 to current year
+            for (let year = currentYear; year >= 2020; year--) {
+                yearRangeSelect.add(new Option(`${year}`, `${year}`));
+            }
+            
+            // Set default to current year
+            yearRangeSelect.value = `${currentYear}`;
+            
+            // Add change listener to refresh on year change
+            yearRangeSelect.addEventListener('change', fetchMaps);
+        }
+
+        function buildApiUrl() {
+            const selectedYear = document.getElementById('yearRange').value;
+            
+            let url = `${API_URL_BASE}?${DEFAULT_PARAMS}`;
+            
+            if (selectedYear) {
+                url += `&uploadedafter=${selectedYear}-01-01&uploadedbefore=${selectedYear}-12-31`;
+            }
+            
+            return url;
+        }
+
+        // Toggle cached only switch
+        function toggleCachedOnly() {
+            isCachedOnly = !isCachedOnly;
+            const toggle = document.getElementById('cachedToggle');
+            toggle.classList.toggle('active', isCachedOnly);
+            applyFilters();
+        }
+
+        // Set sort direction
+        function setSortDirection(direction) {
+            sortDirection = direction;
+            document.getElementById('sortAscBtn').classList.toggle('active', direction === 'asc');
+            document.getElementById('sortDescBtn').classList.toggle('active', direction === 'desc');
+            applyFilters();
+        }
+
+        // Update stats display
+        function updateStats(total, showing) {
+            document.getElementById('totalMapsCount').textContent = total.toLocaleString();
+            document.getElementById('filteredMapsCount').textContent = showing.toLocaleString();
+        }
 
         async function fetchMaps() {
             const content = document.getElementById('content');
             content.innerHTML = '<div class="loading">Loading maps</div>';
 
             try {
-                const response = await fetch(API_URL);
+                const url = buildApiUrl();
+                const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
                 const data = await response.json();
                 allMaps = data.Results || [];
-                displayMaps(allMaps);
+                
+                // Pre-check cached status for all maps
+                content.innerHTML = '<div class="loading">Checking cached maps...</div>';
+                cachedMapsIds.clear();
+                
+                // Check cached status in batches for performance
+                const batchSize = 10;
+                for (let i = 0; i < allMaps.length; i += batchSize) {
+                    const batch = allMaps.slice(i, i + batchSize);
+                    await Promise.all(batch.map(async (map) => {
+                        if (await window.electronAPI.isMapCached(map.MapId)) {
+                            cachedMapsIds.add(map.MapId);
+                        }
+                    }));
+                }
+                
+                applyFilters();
             } catch (error) {
                 content.innerHTML = `<div class="error">Failed to load maps: ${error.message}</div>`;
+            } finally {
+                isLoading = false;
             }
+        }
+
+        // Apply all filters and sorting
+        function applyFilters() {
+            let filtered = [...allMaps];
+            
+            // Apply search filter
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchTerm) {
+                filtered = filtered.filter(map => 
+                    map.Name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Apply cached only filter
+            if (isCachedOnly) {
+                filtered = filtered.filter(map => cachedMapsIds.has(map.MapId));
+            }
+            
+            // Apply sorting
+            const sortBy = document.getElementById('sortSelect').value;
+            const multiplier = sortDirection === 'asc' ? 1 : -1;
+            filtered.sort((a, b) => {
+                const extractNumber = (name) => {
+                    const match = name.match(/(\d+)/);
+                    return match ? parseInt(match[1], 10) : 0;
+                };
+                
+                switch (sortBy) {
+                    case 'mapId': return ((a.MapId || 0) - (b.MapId || 0)) * multiplier;
+                    case 'natural': {
+                        const numA = extractNumber(a.Name);
+                        const numB = extractNumber(b.Name);
+                        return (numA - numB) * multiplier;
+                    }
+                    case 'name': return a.Name.localeCompare(b.Name) * multiplier;
+                    case 'downloads': return ((b.DownloadCount || 0) - (a.DownloadCount || 0)) * multiplier;
+                    case 'awards': return ((b.AwardCount || 0) - (a.AwardCount || 0)) * multiplier;
+                    case 'difficulty': return ((a.Difficulty || 0) - (b.Difficulty || 0)) * multiplier;
+                    default: return 0;
+                }
+            });
+            
+            updateStats(allMaps.length, filtered.length);
+            
+            // Display maps
+            displayMaps(filtered);
         }
 
         function getDifficultyClass(diff) {
@@ -329,42 +771,21 @@
             const content = document.getElementById('content');
 
             if (!maps || maps.length === 0) {
-                content.innerHTML = '<div class="error">No maps found</div>';
+                content.innerHTML = '<div class="error">No maps found. Try adjusting your filters!</div>';
                 return;
             }
 
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const sortBy = document.getElementById('sortSelect').value;
-
-            let filtered = maps.filter(m => 
-                m.Name.toLowerCase().includes(searchTerm) ||
-                (m.Environment && m.Environment.toLowerCase().includes(searchTerm))
-            );
-
-            filtered.sort((a, b) => {
-                const extractNumber = (name) => {
-                    const match = name.match(/(\d+)/);
-                    return match ? parseInt(match[1], 10) : 0;
-                };
-                
-                switch (sortBy) {
-                    case 'natural': {
-                        const numA = extractNumber(a.Name);
-                        const numB = extractNumber(b.Name);
-                        return numA - numB;
-                    }
-                    case 'name': return a.Name.localeCompare(b.Name);
-                    case 'downloads': return (b.DownloadCount || 0) - (a.DownloadCount || 0);
-                    case 'awards': return (b.AwardCount || 0) - (a.AwardCount || 0);
-                    case 'difficulty': return (a.Difficulty || 0) - (b.Difficulty || 0);
-                    default: return 0;
-                }
-            });
-
-            const html = `<div class="maps-grid">${filtered.map(map => `
-                <div class="map-card" onclick="openMap('${map.MapId}', '${map.Name.replace(/'/g, "\\'")}')">
+            const html = `<div class="maps-grid">${maps.map(map => `
+                <div class="map-card" onclick="handleMapClick(event, '${map.MapId}', '${map.Name.replace(/'/g, "\\'")}')">
+                    ${cachedMapsIds.has(map.MapId) ? `
+                    <div class="cached-indicator">
+                        <svg class="cached-icon" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        Cached
+                    </div>` : ''}
                     <div class="map-image">
-                        <img src="https://trackmania.exchange/mapthumb/${map.MapId}" alt="${map.Name}" onerror="this.parentElement.innerHTML='No Image'">
+                        <img src="https://trackmania.exchange/mapthumb/${map.MapId}" alt="${map.Name}" loading="lazy" onerror="this.parentElement.innerHTML='No Image'">
                     </div>
                     <div class="map-info">
                         <div class="map-name">${escapeHtml(map.Name)}</div>
@@ -388,7 +809,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="click-hint">Click to open in Trackmania</div>
+                    <div class="click-hint">Click to open in Trackmania • Ctrl+Click to open in browser</div>
                 </div>
             `).join('')}</div>`;
 
@@ -401,59 +822,64 @@
             return div.innerHTML;
         }
 
-        async function openMap(mapId, mapName) {
-            const overlay = document.getElementById('progressOverlay');
+        async function handleMapClick(event, mapId, mapName) {
+            if (event.ctrlKey) {
+                window.open(`https://trackmania.exchange/map/${mapId}`, '_blank');
+                return;
+            }
+            
+            const progressOverlay = document.getElementById('progressOverlay');
+            const progressTitle = document.getElementById('progressTitle');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
-            const progressTitle = document.getElementById('progressTitle');
             
-            overlay.style.display = 'flex';
+            progressTitle.textContent = `Downloading ${mapName}...`;
             progressBar.style.width = '0%';
             progressText.textContent = 'Starting...';
-            progressTitle.textContent = mapName;
+            progressOverlay.style.display = 'flex';
             
-            const result = await window.electronAPI.openTrackmania(mapId);
+            window.electronAPI.onDownloadProgress((data) => {
+                if (data.mapId === mapId) {
+                    progressBar.style.width = `${data.progress}%`;
+                    
+                    switch (data.status) {
+                        case 'starting':
+                            progressText.textContent = 'Connecting to server...';
+                            break;
+                        case 'downloading':
+                            progressText.textContent = `Downloading... ${data.progress}%`;
+                            break;
+                        case 'waiting':
+                            progressText.textContent = 'Waiting for Trackmania...';
+                            break;
+                        case 'login':
+                            progressText.textContent = 'Waiting for login...';
+                            break;
+                        case 'launching':
+                            progressText.textContent = 'Launching map...';
+                            break;
+                        case 'complete':
+                            progressText.textContent = 'Complete!';
+                            setTimeout(() => {
+                                progressOverlay.style.display = 'none';
+                            }, 1000);
+                            break;
+                        case 'error':
+                            progressText.textContent = `Error: ${data.error}`;
+                            setTimeout(() => {
+                                progressOverlay.style.display = 'none';
+                            }, 3000);
+                            break;
+                    }
+                }
+            });
             
-            if (!result.success) {
-                progressText.textContent = `Error: ${result.error}`;
-                setTimeout(() => { overlay.style.display = 'none'; }, 2000);
-            }
+            await window.electronAPI.openTrackmania(mapId);
         }
 
-        window.electronAPI.onDownloadProgress((data) => {
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
-            const overlay = document.getElementById('progressOverlay');
-            
-            if (data.status === 'starting') {
-                progressBar.style.width = '10%';
-                progressText.textContent = 'Starting download...';
-            } else if (data.status === 'downloading') {
-                progressBar.style.width = data.progress + '%';
-                progressText.textContent = `Downloading... ${data.progress}%`;
-            } else if (data.status === 'launching') {
-                progressBar.style.width = '90%';
-                progressText.textContent = 'Launching Trackmania...';
-            } else if (data.status === 'waiting') {
-                progressBar.style.width = data.progress + '%';
-                const seconds = data.attempts ? data.attempts * 3 : 0;
-                progressText.textContent = `Waiting for Trackmania... (${seconds}s)`;
-            } else if (data.status === 'login') {
-                progressBar.style.width = '95%';
-                progressText.textContent = 'Logging in...';
-            } else if (data.status === 'complete') {
-                progressBar.style.width = '100%';
-                progressText.textContent = 'Done!';
-                setTimeout(() => { overlay.style.display = 'none'; }, 500);
-            } else if (data.status === 'error') {
-                progressText.textContent = `Error: ${data.error}`;
-                setTimeout(() => { overlay.style.display = 'none'; }, 3000);
-            }
-        });
-
-        document.getElementById('searchInput').addEventListener('input', () => displayMaps(allMaps));
-        document.getElementById('sortSelect').addEventListener('change', () => displayMaps(allMaps));
-
+        // Initialize
+        setDefaultYearRange();
+        document.getElementById('sortAscBtn').classList.add('active');
         fetchMaps();
     </script>
 </body>
