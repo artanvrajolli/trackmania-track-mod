@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trackmania Map Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00d9ff;
+        }
+
+        .header h1 {
+            color: #00d9ff;
+            font-size: 2em;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .controls input, .controls select {
+            padding: 10px 15px;
+            border: 1px solid #00d9ff;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        .controls button {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #00d9ff, #0099cc);
+            border: none;
+            border-radius: 5px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .controls button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 217, 255, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #00d9ff;
+        }
+
+        .loading::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            margin: 20px;
+            border-radius: 10px;
+            border: 1px solid #ff6b6b;
+        }
+
+        .maps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .map-card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .map-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+            border-color: #00d9ff;
+        }
+
+        .map-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #2a2a4a, #1a1a2e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .map-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .map-info {
+            padding: 15px;
+        }
+
+        .map-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #00d9ff;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .map-details {
+            font-size: 0.85em;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .map-details span {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+
+        .tag {
+            background: rgba(0, 217, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75em;
+        }
+
+        .difficulty {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .diff-beginner { background: #4ade80; color: #000; }
+        .diff-intermediate { background: #facc15; color: #000; }
+        .diff-advanced { background: #fb923c; color: #000; }
+        .diff-expert { background: #ef4444; color: #fff; }
+        .diff-lunatic { background: #a855f7; color: #fff; }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+            font-size: 0.8em;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            color: #00d9ff;
+            font-weight: bold;
+            display: block;
+        }
+
+        .click-hint {
+            font-size: 0.75em;
+            color: #666;
+            text-align: center;
+            padding: 8px;
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .progress-modal {
+            background: #1a1a2e;
+            border: 2px solid #00d9ff;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .progress-modal h3 {
+            color: #00d9ff;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Trackmania Map Viewer</h1>
+        <p>Ubisoft Nadeo Maps</p>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search maps...">
+        <select id="sortSelect">
+            <option value="natural" selected>Sort by Number (1, 2, ..., 10)</option>
+            <option value="name">Sort by Name (A-Z)</option>
+            <option value="downloads">Sort by Downloads</option>
+            <option value="awards">Sort by Awards</option>
+            <option value="difficulty">Sort by Difficulty</option>
+        </select>
+        <button onclick="fetchMaps()">Refresh Maps</button>
+    </div>
+
+    <div id="content">
+        <div class="loading">Loading maps</div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay" style="display: none;">
+        <div class="progress-modal">
+            <h3 id="progressTitle">Downloading Map...</h3>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Starting...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://trackmania.exchange/api/maps?author=Ubisoft+Nadeo&order1=6&uploadedbefore=2026-12-31&uploadedafter=2024-01-01&count=40&fields=MapId%2CMapUid%2CName%2CAuthors%5B%5D%2CEnvironment%2CType%2CTags%5B%5D%2CLength%2CDifficulty%2CRoutes%2CAwardCount%2CDownloadCount%2CReplayCount%2CTrackValue%2CIsPublic%2CIsListed%2CVehicle%2CVehicleName%2CHasImages%2CReplayType%2CHasCoauthorRequest%2CAuthorBeaten%2COnlineWR';
+
+        let allMaps = [];
+
+        async function fetchMaps() {
+            const content = document.getElementById('content');
+            content.innerHTML = '<div class="loading">Loading maps</div>';
+
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                allMaps = data.Results || [];
+                displayMaps(allMaps);
+            } catch (error) {
+                content.innerHTML = `<div class="error">Failed to load maps: ${error.message}</div>`;
+            }
+        }
+
+        function getDifficultyClass(diff) {
+            const d = parseInt(diff) || 0;
+            if (d <= 2) return 'diff-beginner';
+            if (d <= 4) return 'diff-intermediate';
+            if (d <= 6) return 'diff-advanced';
+            if (d <= 8) return 'diff-expert';
+            return 'diff-lunatic';
+        }
+
+        function getDifficultyName(diff) {
+            const d = parseInt(diff) || 0;
+            if (d <= 2) return 'Beginner';
+            if (d <= 4) return 'Intermediate';
+            if (d <= 6) return 'Advanced';
+            if (d <= 8) return 'Expert';
+            return 'Lunatic';
+        }
+
+        function displayMaps(maps) {
+            const content = document.getElementById('content');
+
+            if (!maps || maps.length === 0) {
+                content.innerHTML = '<div class="error">No maps found</div>';
+                return;
+            }
+
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortBy = document.getElementById('sortSelect').value;
+
+            let filtered = maps.filter(m => 
+                m.Name.toLowerCase().includes(searchTerm) ||
+                (m.Environment && m.Environment.toLowerCase().includes(searchTerm))
+            );
+
+            filtered.sort((a, b) => {
+                const extractNumber = (name) => {
+                    const match = name.match(/(\d+)/);
+                    return match ? parseInt(match[1], 10) : 0;
+                };
+                
+                switch (sortBy) {
+                    case 'natural': {
+                        const numA = extractNumber(a.Name);
+                        const numB = extractNumber(b.Name);
+                        return numA - numB;
+                    }
+                    case 'name': return a.Name.localeCompare(b.Name);
+                    case 'downloads': return (b.DownloadCount || 0) - (a.DownloadCount || 0);
+                    case 'awards': return (b.AwardCount || 0) - (a.AwardCount || 0);
+                    case 'difficulty': return (a.Difficulty || 0) - (b.Difficulty || 0);
+                    default: return 0;
+                }
+            });
+
+            const html = `<div class="maps-grid">${filtered.map(map => `
+                <div class="map-card" onclick="openMap('${map.MapId}', '${map.Name.replace(/'/g, "\\'")}')">
+                    <div class="map-image">
+                        <img src="https://trackmania.exchange/mapthumb/${map.MapId}" alt="${map.Name}" onerror="this.parentElement.innerHTML='No Image'">
+                    </div>
+                    <div class="map-info">
+                        <div class="map-name">${escapeHtml(map.Name)}</div>
+                        <div class="map-details">
+                            <span class="difficulty ${getDifficultyClass(map.Difficulty)}">${getDifficultyName(map.Difficulty)}</span>
+                            <span class="tag">${map.Environment || 'Unknown'}</span>
+                            <span class="tag">${map.VehicleName || 'Car'}</span>
+                        </div>
+                        <div class="stats">
+                            <div class="stat">
+                                <span class="stat-value">${(map.DownloadCount || 0).toLocaleString()}</span>
+                                Downloads
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">${map.AwardCount || 0}</span>
+                                Awards
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">${map.ReplayCount || 0}</span>
+                                Replays
+                            </div>
+                        </div>
+                    </div>
+                    <div class="click-hint">Click to open in Trackmania</div>
+                </div>
+            `).join('')}</div>`;
+
+            content.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function openMap(mapId, mapName) {
+            const overlay = document.getElementById('progressOverlay');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const progressTitle = document.getElementById('progressTitle');
+            
+            overlay.style.display = 'flex';
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Starting...';
+            progressTitle.textContent = mapName;
+            
+            const result = await window.electronAPI.openTrackmania(mapId);
+            
+            if (!result.success) {
+                progressText.textContent = `Error: ${result.error}`;
+                setTimeout(() => { overlay.style.display = 'none'; }, 2000);
+            }
+        }
+
+        window.electronAPI.onDownloadProgress((data) => {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const overlay = document.getElementById('progressOverlay');
+            
+            if (data.status === 'starting') {
+                progressBar.style.width = '10%';
+                progressText.textContent = 'Starting download...';
+            } else if (data.status === 'downloading') {
+                progressBar.style.width = data.progress + '%';
+                progressText.textContent = `Downloading... ${data.progress}%`;
+            } else if (data.status === 'launching') {
+                progressBar.style.width = '90%';
+                progressText.textContent = 'Launching Trackmania...';
+            } else if (data.status === 'waiting') {
+                progressBar.style.width = data.progress + '%';
+                const seconds = data.attempts ? data.attempts * 3 : 0;
+                progressText.textContent = `Waiting for Trackmania... (${seconds}s)`;
+            } else if (data.status === 'login') {
+                progressBar.style.width = '95%';
+                progressText.textContent = 'Logging in...';
+            } else if (data.status === 'complete') {
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Done!';
+                setTimeout(() => { overlay.style.display = 'none'; }, 500);
+            } else if (data.status === 'error') {
+                progressText.textContent = `Error: ${data.error}`;
+                setTimeout(() => { overlay.style.display = 'none'; }, 3000);
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', () => displayMaps(allMaps));
+        document.getElementById('sortSelect').addEventListener('change', () => displayMaps(allMaps));
+
+        fetchMaps();
+    </script>
+</body>
+</html>

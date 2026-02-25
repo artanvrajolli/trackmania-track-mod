@@ -1,0 +1,21 @@
+{
+  "name": "trackmania-map-viewer",
+  "version": "1.0.0",
+  "description": "Trackmania Exchange Map Viewer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.trackmania.mapviewer",
+    "productName": "Trackmania Map Viewer",
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
