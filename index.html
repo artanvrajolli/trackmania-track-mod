@@ -860,6 +860,21 @@
                             break;
                         case 'complete':
                             progressText.textContent = 'Complete!';
+                            // Add to cached maps and show badge
+                            cachedMapsIds.add(mapId);
+                            // Find the map card and add cached indicator
+                            const mapCard = document.querySelector(`.map-card[onclick*="'${mapId}'"]`);
+                            if (mapCard && !mapCard.querySelector('.cached-indicator')) {
+                                const cachedIndicator = document.createElement('div');
+                                cachedIndicator.className = 'cached-indicator';
+                                cachedIndicator.innerHTML = `
+                                    <svg class="cached-icon" viewBox="0 0 24 24">
+                                        <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    Cached
+                                `;
+                                mapCard.appendChild(cachedIndicator);
+                            }
                             setTimeout(() => {
                                 progressOverlay.style.display = 'none';
                             }, 1000);
