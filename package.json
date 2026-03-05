@@ -2,6 +2,7 @@
   "name": "trackmania-map-viewer",
   "version": "1.0.0",
   "description": "Trackmania Exchange Map Viewer",
+  "author": "artanvrajolli",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -22,7 +23,8 @@
     ],
     "win": {
       "target": ["nsis", "portable"]
-    }
+    },
+    "publish": null
   },
   "dependencies": {
     "electron-store": "^8.2.0"

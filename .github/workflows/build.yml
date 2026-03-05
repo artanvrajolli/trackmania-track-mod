@@ -28,6 +28,8 @@ jobs:
 
       - name: Build the app
         run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: List dist folder
         run: Get-ChildItem -Path dist -Recurse -File | Select-Object FullName, Length
