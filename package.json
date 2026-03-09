@@ -1,6 +1,6 @@
 {
   "name": "trackmania-map-viewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Trackmania Exchange Map Viewer",
   "author": "artanvrajolli",
   "main": "main.js",

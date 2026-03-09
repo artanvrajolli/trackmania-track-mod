@@ -41,8 +41,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/Trackmania Map Viewer 1.0.0.exe
-            dist/Trackmania Map Viewer Setup 1.0.0.exe
+            dist/Trackmania Map Viewer 1.0.1.exe
+            dist/Trackmania Map Viewer Setup 1.0.1.exe
           draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
