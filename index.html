@@ -700,20 +700,45 @@
             color: #666;
         }
 
+        .settings-status {
+            margin-top: 10px;
+            font-size: 0.85em;
+            min-height: 18px;
+        }
+
+        .settings-status.success {
+            color: #00ff88;
+        }
+
+        .settings-status.error {
+            color: #ff8c8c;
+        }
+
         .history-btn {
-            padding: 8px 14px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 6px;
-            color: #00d9ff;
+            padding: 9px 16px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.22), rgba(0, 153, 204, 0.16));
+            border: 1px solid rgba(0, 217, 255, 0.45);
+            border-radius: 999px;
+            color: #dffbff;
             font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
             cursor: pointer;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 6px 18px rgba(0, 217, 255, 0.12);
             transition: all 0.2s;
         }
 
         .history-btn:hover {
-            border-color: #00d9ff;
-            background: rgba(0, 217, 255, 0.12);
+            border-color: #5cecff;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(0, 153, 204, 0.2));
+            box-shadow: 0 10px 24px rgba(0, 217, 255, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .history-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 217, 255, 0.16);
         }
 
         .history-drawer-overlay {
@@ -793,9 +818,11 @@
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(0, 217, 255, 0.14);
             border-radius: 10px;
-            padding: 14px;
             cursor: pointer;
             transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
         }
 
         .history-item:hover {
@@ -803,19 +830,52 @@
             background: rgba(0, 217, 255, 0.06);
         }
 
+        .history-item-thumb {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #2a2a4a, #1a1a2e);
+        }
+
+        .history-item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .history-item-thumb::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(8, 10, 20, 0.18) 0%, rgba(8, 10, 20, 0.88) 100%);
+        }
+
+        .history-item-content {
+            position: relative;
+            z-index: 1;
+            min-width: 0;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 16px;
+        }
+
         .history-item-name {
             color: #e8faff;
             font-weight: 600;
             margin-bottom: 8px;
             word-break: break-word;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
         }
 
         .history-item-meta {
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            color: #8fa5b5;
+            color: #d8e8f2;
             font-size: 0.8em;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
         }
 
         .history-drawer-footer {
@@ -944,9 +1004,6 @@
         <div class="history-drawer-body">
             <div id="historyList"></div>
         </div>
-        <div class="history-drawer-footer">
-            <button class="history-clear-btn" onclick="clearTrackHistory()">Clear history</button>
-        </div>
     </aside>
 
     <!-- Settings Modal -->
@@ -963,6 +1020,12 @@
                     <button onclick="selectTrackmaniaPath()">Browse...</button>
                 </div>
                 <div class="settings-help-text">Select your Trackmania.exe if the game doesn't launch automatically.</div>
+            </div>
+            <div class="settings-group">
+                <label>History</label>
+                <button class="settings-danger-btn" onclick="handleClearTrackHistory()">Clear latest played tracks history</button>
+                <div class="settings-help-text">Remove all recently launched tracks from the history drawer.</div>
+                <div id="historySettingsStatus" class="settings-status"></div>
             </div>
         </div>
     </div>
@@ -1177,10 +1240,15 @@
 
             container.innerHTML = `<div class="history-list">${trackHistory.map(item => `
                 <div class="history-item" onclick="reopenHistoryTrack('${item.mapId}')">
-                    <div class="history-item-name">${escapeHtml(item.mapName || `Track ${item.mapId}`)}</div>
-                    <div class="history-item-meta">
-                        <span>ID: ${item.mapId}</span>
-                        <span>${formatHistoryDate(item.playedAt)}</span>
+                    <div class="history-item-thumb">
+                        <img src="https://trackmania.exchange/mapthumb/${item.mapId}" alt="${escapeHtml(item.mapName || `Track ${item.mapId}`)}" loading="lazy" onerror="this.parentElement.textContent='No Image'">
+                    </div>
+                    <div class="history-item-content">
+                        <div class="history-item-name">${escapeHtml(item.mapName || `Track ${item.mapId}`)}</div>
+                        <div class="history-item-meta">
+                            <span>ID: ${item.mapId}</span>
+                            <span>${formatHistoryDate(item.playedAt)}</span>
+                        </div>
                     </div>
                 </div>
             `).join('')}</div>`;
@@ -1199,9 +1267,32 @@
         }
 
         function clearTrackHistory() {
-            trackHistory = [];
-            saveTrackHistory();
-            renderTrackHistory();
+            try {
+                trackHistory = [];
+                saveTrackHistory();
+                renderTrackHistory();
+                return { success: true };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function setHistorySettingsStatus(message, type) {
+            const status = document.getElementById('historySettingsStatus');
+            status.textContent = message || '';
+            status.className = 'settings-status';
+            if (type) {
+                status.classList.add(type);
+            }
+        }
+
+        function handleClearTrackHistory() {
+            const result = clearTrackHistory();
+            if (result.success) {
+                setHistorySettingsStatus('History cleared successfully.', 'success');
+            } else {
+                setHistorySettingsStatus(`Failed to clear history: ${result.error || 'Unknown error'}`, 'error');
+            }
         }
 
         async function reopenHistoryTrack(mapId) {
@@ -1504,10 +1595,12 @@
         // Settings modal functions
         function openSettings() {
             document.getElementById('settingsOverlay').style.display = 'flex';
+            setHistorySettingsStatus('', '');
         }
 
         function closeSettings() {
             document.getElementById('settingsOverlay').style.display = 'none';
+            setHistorySettingsStatus('', '');
         }
 
         async function selectTrackmaniaPath() {
