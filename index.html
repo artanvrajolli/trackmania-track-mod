@@ -1309,6 +1309,7 @@
             }
 
             const progressOverlay = document.getElementById('progressOverlay');
+            const progressTitle = document.getElementById('progressTitle');
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
 
@@ -1320,6 +1321,13 @@
                     break;
                 case 'downloading':
                     progressText.textContent = `Downloading... ${data.progress}%`;
+                    break;
+                case 'retry':
+                    progressText.textContent = `${data.error} (Attempt ${data.retryAttempt}/${data.maxRetries})`;
+                    break;
+                case 'cached':
+                    progressTitle.textContent = `Launching ${activeLaunch.mapName}...`;
+                    progressText.textContent = 'Using cached map...';
                     break;
                 case 'waiting':
                     progressText.textContent = 'Waiting for Trackmania...';
@@ -1362,17 +1370,20 @@
             }
         }
 
-        async function fetchMaps() {
+async function fetchMaps() {
             const content = document.getElementById('content');
             content.innerHTML = '<div class="loading">Loading maps</div>';
 
             try {
                 const url = buildApiUrl();
+                window.electronAPI.log(`Fetching maps from: ${url}`);
                 const response = await fetch(url);
+                window.electronAPI.log(`Maps API response status: ${response.status}`);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
                 const data = await response.json();
                 allMaps = data.Results || [];
+                window.electronAPI.log(`Received ${allMaps.length} maps from API`);
                 
                 // Pre-check cached status for all maps
                 content.innerHTML = '<div class="loading">Checking cached maps...</div>';
@@ -1582,6 +1593,13 @@
             renderTrackHistory();
             setDefaultYearRange();
             applyFilterStateToUI();
+            
+            // Check for clean marker and clear history if present
+            const shouldCleanHistory = await window.electronAPI.checkCleanMarker();
+            if (shouldCleanHistory) {
+                localStorage.removeItem(TRACK_HISTORY_KEY);
+                renderTrackHistory();
+            }
             
             // Load current Trackmania path
             const currentPath = await window.electronAPI.getTrackmaniaPath();

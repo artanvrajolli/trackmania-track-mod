@@ -14,5 +14,17 @@ try {
     }
 } catch (error) {
     console.error(`Failed to clean Trackmania temp maps: ${error.message}`);
-    process.exit(1);
+}
+
+try {
+    const historyPath = path.join(os.tmpdir(), 'trackmania-history.json');
+    if (fs.existsSync(historyPath)) {
+        fs.unlinkSync(historyPath);
+        console.log(`Removed Trackmania history: ${historyPath}`);
+    }
+    const markerPath = path.join(os.tmpdir(), 'trackmania-clean-marker');
+    fs.writeFileSync(markerPath, Date.now().toString());
+    console.log(`Created clean marker: ${markerPath}`);
+} catch (error) {
+    console.error(`Failed to clean Trackmania history: ${error.message}`);
 }

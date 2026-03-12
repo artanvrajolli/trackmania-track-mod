@@ -56,17 +56,18 @@ function isLikelyHtmlResponse(contentType, initialChunk) {
     return normalizedChunk.startsWith('<!doctype html') || normalizedChunk.startsWith('<html');
 }
 
-function downloadMapFile(url, mapPath, event, mapId) {
+function downloadMapFile(url, mapPath, event, mapId, retries = 3) {
     const https = require('https');
 
     return new Promise((resolve, reject) => {
+        log(`[Download] Starting download from: ${url}`);
         const request = https.get(url, (response) => {
-            log(`Download response status: ${response.statusCode}`);
+            log(`[Download] Response status: ${response.statusCode} for URL: ${url}`);
             event.sender.send('download-progress', { mapId, status: 'downloading', progress: 10 });
 
             if (response.statusCode === 301 || response.statusCode === 302) {
                 const redirectUrl = response.headers.location;
-                log(`Redirect to: ${redirectUrl}`);
+                log(`[Download] Redirect from ${url} to: ${redirectUrl}`);
                 response.resume();
 
                 if (!redirectUrl) {
@@ -74,7 +75,7 @@ function downloadMapFile(url, mapPath, event, mapId) {
                     return;
                 }
 
-                downloadMapFile(redirectUrl, mapPath, event, mapId)
+                downloadMapFile(redirectUrl, mapPath, event, mapId, retries)
                     .then(resolve)
                     .catch(reject);
                 return;
@@ -82,6 +83,23 @@ function downloadMapFile(url, mapPath, event, mapId) {
 
             if (response.statusCode !== 200) {
                 response.resume();
+                if (retries > 0 && (response.statusCode === 500 || response.statusCode === 503 || response.statusCode === 502)) {
+                    log(`Server error ${response.statusCode}, retrying... (${retries} left)`);
+                    event.sender.send('download-progress', { 
+                        mapId, 
+                        status: 'retry', 
+                        progress: 5,
+                        retryAttempt: 4 - retries,
+                        maxRetries: 3,
+                        error: `Server error ${response.statusCode}, retrying...`
+                    });
+                    setTimeout(() => {
+                        downloadMapFile(url, mapPath, event, mapId, retries - 1)
+                            .then(resolve)
+                            .catch(reject);
+                    }, 2000);
+                    return;
+                }
                 reject(new Error(`TMX download failed with status ${response.statusCode}`));
                 return;
             }
@@ -136,7 +154,7 @@ function downloadMapFile(url, mapPath, event, mapId) {
                 }
 
                 file.end(() => {
-                    log('Download complete');
+                    log(`[Download] Complete: ${mapPath} (${downloaded} bytes)`);
                     resolve();
                 });
             });
@@ -249,10 +267,16 @@ ipcMain.handle('open-trackmania', async (event, mapId) => {
     log(`Trackmania running: ${isRunning}`);
     
     try {
-        log('Starting download...');
-        event.sender.send('download-progress', { mapId, status: 'starting', progress: 0 });
-        
-        await downloadMapFile(downloadUrl, mapPath, event, mapId);
+        if (fs.existsSync(mapPath)) {
+            log(`Map already cached at: ${mapPath}`);
+            const stats = fs.statSync(mapPath);
+            log(`Cached map file size: ${stats.size} bytes`);
+            event.sender.send('download-progress', { mapId, status: 'cached', progress: 100 });
+        } else {
+            log('Starting download...');
+            event.sender.send('download-progress', { mapId, status: 'starting', progress: 0 });
+            await downloadMapFile(downloadUrl, mapPath, event, mapId);
+        }
         
         log(`Map file exists: ${fs.existsSync(mapPath)}`);
         if (fs.existsSync(mapPath)) {
@@ -347,14 +371,19 @@ ipcMain.handle('open-map-direct', async (event, mapId) => {
 
     for (const exePath of commonPaths) {
         try {
+            log(`[Open] Trying exe: ${exePath}`);
             spawn(exePath, [`/joinmap=${mapId}`], { detached: true });
+            log(`[Open] Launched: ${exePath} with /joinmap=${mapId}`);
             return { success: true, path: exePath };
         } catch (e) {
             continue;
         }
     }
 
-    await shell.openExternal(`trackmania://joinmap/${mapId}`);
+    const protocolUrl = `trackmania://joinmap/${mapId}`;
+    log(`[Open] Trying protocol: ${protocolUrl}`);
+    await shell.openExternal(protocolUrl);
+    log(`[Open] Opened protocol URL: ${protocolUrl}`);
     return { success: true, method: 'protocol' };
 });
 
@@ -400,4 +429,22 @@ ipcMain.handle('load-filter-state', async () => {
         log(`Error loading filter state: ${error.message}`);
         return null;
     }
+});
+
+ipcMain.handle('check-clean-marker', async () => {
+    const markerPath = path.join(os.tmpdir(), 'trackmania-clean-marker');
+    try {
+        if (fs.existsSync(markerPath)) {
+            fs.unlinkSync(markerPath);
+            log('Clean marker found and removed');
+            return true;
+        }
+    } catch (error) {
+        log(`Error checking clean marker: ${error.message}`);
+    }
+    return false;
+});
+
+ipcMain.handle('log', async (event, message) => {
+    log(`[Renderer] ${message}`);
 });

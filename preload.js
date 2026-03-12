@@ -8,6 +8,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     loadFilterState: () => ipcRenderer.invoke('load-filter-state'),
     getTrackmaniaPath: () => ipcRenderer.invoke('get-trackmania-path'),
     selectTrackmaniaPath: () => ipcRenderer.invoke('select-trackmania-path'),
+    checkCleanMarker: () => ipcRenderer.invoke('check-clean-marker'),
+    log: (message) => ipcRenderer.invoke('log', message),
     onDownloadProgress: (callback) => {
         ipcRenderer.on('download-progress', (event, data) => callback(data));
     }
