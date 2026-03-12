@@ -1637,9 +1637,16 @@ async function fetchMaps() {
             }
         });
 
-        document.addEventListener('keydown', (event) => {
+        document.addEventListener('keydown', async (event) => {
             if (event.key === 'Escape') {
                 closeHistoryDrawer();
+                const progressOverlay = document.getElementById('progressOverlay');
+                if (activeLaunch && progressOverlay.style.display !== 'none') {
+                    progressOverlay.style.display = 'none';
+                    const cancelledMapId = activeLaunch.mapId;
+                    activeLaunch = null;
+                    await window.electronAPI.cancelDownload(cancelledMapId);
+                }
             }
         });
 

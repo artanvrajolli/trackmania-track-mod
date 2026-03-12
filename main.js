@@ -5,6 +5,7 @@ const fs = require('fs');
 const os = require('os');
 
 let config = {};
+let cancelDownloadId = null;
 const configPath = path.join(app.getPath('userData'), 'config.json');
 
 function loadConfig() {
@@ -60,6 +61,12 @@ function downloadMapFile(url, mapPath, event, mapId, retries = 3) {
     const https = require('https');
 
     return new Promise((resolve, reject) => {
+        if (cancelDownloadId !== mapId) {
+            log(`[Download] Download cancelled or changed for map: ${mapId}`);
+            reject(new Error('Download cancelled'));
+            return;
+        }
+        
         log(`[Download] Starting download from: ${url}`);
         const request = https.get(url, (response) => {
             log(`[Download] Response status: ${response.statusCode} for URL: ${url}`);
@@ -84,6 +91,10 @@ function downloadMapFile(url, mapPath, event, mapId, retries = 3) {
             if (response.statusCode !== 200) {
                 response.resume();
                 if (retries > 0 && (response.statusCode === 500 || response.statusCode === 503 || response.statusCode === 502)) {
+                    if (cancelDownloadId !== mapId) {
+                        reject(new Error('Download cancelled'));
+                        return;
+                    }
                     log(`Server error ${response.statusCode}, retrying... (${retries} left)`);
                     event.sender.send('download-progress', { 
                         mapId, 
@@ -274,9 +285,12 @@ ipcMain.handle('open-trackmania', async (event, mapId) => {
             event.sender.send('download-progress', { mapId, status: 'cached', progress: 100 });
         } else {
             log('Starting download...');
+            cancelDownloadId = mapId;
             event.sender.send('download-progress', { mapId, status: 'starting', progress: 0 });
             await downloadMapFile(downloadUrl, mapPath, event, mapId);
         }
+        
+        cancelDownloadId = null;
         
         log(`Map file exists: ${fs.existsSync(mapPath)}`);
         if (fs.existsSync(mapPath)) {
@@ -338,6 +352,7 @@ ipcMain.handle('open-trackmania', async (event, mapId) => {
             return { success: true, method: 'shell-open' };
         }
     } catch (error) {
+        cancelDownloadId = null;
         cleanupFile(mapPath);
         log(`Error: ${error.message}`);
         log(`Stack: ${error.stack}`);
@@ -429,6 +444,15 @@ ipcMain.handle('load-filter-state', async () => {
         log(`Error loading filter state: ${error.message}`);
         return null;
     }
+});
+
+ipcMain.handle('cancel-download', async (event, mapId) => {
+    if (cancelDownloadId === mapId) {
+        cancelDownloadId = null;
+        log(`Download cancelled for map: ${mapId}`);
+        return true;
+    }
+    return false;
 });
 
 ipcMain.handle('check-clean-marker', async () => {

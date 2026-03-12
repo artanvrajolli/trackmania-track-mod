@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getTrackmaniaPath: () => ipcRenderer.invoke('get-trackmania-path'),
     selectTrackmaniaPath: () => ipcRenderer.invoke('select-trackmania-path'),
     checkCleanMarker: () => ipcRenderer.invoke('check-clean-marker'),
+    cancelDownload: (mapId) => ipcRenderer.invoke('cancel-download', mapId),
     log: (message) => ipcRenderer.invoke('log', message),
     onDownloadProgress: (callback) => {
         ipcRenderer.on('download-progress', (event, data) => callback(data));
