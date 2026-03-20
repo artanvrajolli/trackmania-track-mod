@@ -600,6 +600,22 @@ ipcMain.handle('is-map-cached', async (event, mapId) => {
     return fs.existsSync(mapPath);
 });
 
+ipcMain.handle('clear-cached-maps', async () => {
+    try {
+        const tempDir = path.join(os.tmpdir(), 'trackmania-maps');
+        if (!fs.existsSync(tempDir)) return { success: true, count: 0 };
+        const files = fs.readdirSync(tempDir).filter(f => f.endsWith('.Map.Gbx'));
+        for (const file of files) {
+            fs.unlinkSync(path.join(tempDir, file));
+        }
+        log(`Cleared ${files.length} cached maps`);
+        return { success: true, count: files.length };
+    } catch (error) {
+        log(`Error clearing cached maps: ${error.message}`);
+        return { success: false, error: error.message };
+    }
+});
+
 ipcMain.handle('open-map-direct', async (event, mapId) => {
     const commonPaths = [
         'C:\\Program Files (x86)\\Steam\\steamapps\\common\\Trackmania\\Trackmania.exe',

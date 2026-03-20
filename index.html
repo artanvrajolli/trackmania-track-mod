@@ -660,7 +660,7 @@
 
             background: rgba(0, 0, 0, 0.4);
 
-            border-radius: 10px;
+            border-radius: 8px;
 
             overflow: hidden;
 
@@ -864,25 +864,33 @@
 
 
 
-        .medal-slider-container {
+         .medal-slider-track-wrap {
 
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 4px;
-
-            min-width: 200px;
-
-        }
-
-
-
-        .medal-slider {
+            position: relative;
 
             width: 100%;
 
+            min-width: 200px;
+
+            height: 52px;
+
+            padding-top: 4px;
+
+        }
+
+        .medal-slider-track {
+
+            position: absolute;
+
+            top: 50%;
+
+            left: 9px;
+
+            right: 9px;
+
             height: 6px;
+
+            transform: translateY(-50%);
 
             border-radius: 3px;
 
@@ -898,15 +906,31 @@
 
                 rgba(0, 255, 136, 0.3) 100%);
 
+            pointer-events: none;
+
+        }
+
+        .medal-slider {
+
+            position: relative;
+
+            z-index: 1;
+
+            width: 100%;
+
+            height: 22px;
+
             outline: none;
 
             -webkit-appearance: none;
 
+            appearance: none;
+
             cursor: pointer;
 
+            background: transparent;
+
         }
-
-
 
         .medal-slider::-webkit-slider-thumb {
 
@@ -930,9 +954,9 @@
 
             transition: all 0.2s;
 
+            margin-top: 0;
+
         }
-
-
 
         .medal-slider::-webkit-slider-thumb:hover {
 
@@ -941,8 +965,12 @@
             box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
 
         }
+        
+        .medal-slider::-webkit-slider-runnable-track {
 
+            height: 6px;
 
+        }
 
         .medal-slider::-moz-range-thumb {
 
@@ -964,8 +992,6 @@
 
         }
 
-
-
         .medal-slider::-moz-range-thumb:hover {
 
             transform: scale(1.1);
@@ -974,23 +1000,21 @@
 
         }
 
+        .medal-slider::-moz-range-track {
 
+            height: 6px;
 
-        .medal-slider-labels {
+            background: transparent;
 
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
-
-            padding: 0 2px;
+            border: none;
 
         }
 
-
-
         .medal-label {
+
+            display: inline-flex;
+
+            align-items: center;
 
             font-size: 0.75em;
 
@@ -1032,13 +1056,101 @@
 
         }
 
+        .medal-track-markers {
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            pointer-events: none;
+
+        }
+
+        .medal-track-marker {
+
+            position: absolute;
+
+            top: 50%;
+
+            transform: translate(-50%, -50%);
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 2px;
+
+            pointer-events: auto;
+
+            cursor: pointer;
+
+        }
+
+        .medal-track-marker .marker-img {
+
+            width: 16px;
+
+            height: 16px;
+
+            opacity: 0.7;
+
+            transition: opacity 0.2s, transform 0.2s;
+
+        }
+
+        .medal-track-marker .marker-label {
+
+            font-size: 0.65em;
+
+            color: #666;
+
+            transition: color 0.2s;
+
+        }
+
+        .medal-track-marker:hover .marker-img {
+
+            opacity: 1;
+
+            transform: scale(1.15);
+
+        }
+
+        .medal-track-marker:hover .marker-label {
+
+            color: #00ff88;
+
+        }
+
+        .medal-track-marker.active .marker-img {
+
+            opacity: 1;
+
+        }
+
+        .medal-track-marker.active .marker-label {
+
+            color: #00ff88;
+
+            font-weight: bold;
+
+        }
+
 
 
         .map-image {
 
             width: 100%;
 
-            height: 150px;
+            height: 120px;
 
             object-fit: cover;
 
@@ -1070,7 +1182,11 @@
 
         .map-info {
 
-            padding: 15px;
+            padding: 10px;
+
+            display: flex;
+
+            flex-direction: column;
 
         }
 
@@ -1078,13 +1194,13 @@
 
         .map-name {
 
-            font-size: 1.1em;
+            font-size: 0.95em;
 
             font-weight: bold;
 
             color: #00ff88;
 
-            margin-bottom: 8px;
+            margin-bottom: 4px;
 
             word-break: break-word;
 
@@ -1094,11 +1210,11 @@
 
         .map-details {
 
-            font-size: 0.85em;
+            font-size: 0.8em;
 
             color: #aaa;
 
-            line-height: 1.6;
+            line-height: 1.3;
 
         }
 
@@ -1134,11 +1250,11 @@
 
             display: inline-block;
 
-            padding: 3px 10px;
+            padding: 2px 8px;
 
             border-radius: 3px;
 
-            font-size: 0.8em;
+            font-size: 0.75em;
 
             font-weight: bold;
 
@@ -1164,13 +1280,13 @@
 
             justify-content: space-between;
 
-            margin-top: 10px;
+            margin-top: 6px;
 
-            padding-top: 10px;
+            padding-top: 6px;
 
             border-top: 1px solid rgba(0, 255, 136, 0.2);
 
-            font-size: 0.8em;
+            font-size: 0.75em;
 
         }
 
@@ -1190,6 +1306,8 @@
 
             font-weight: bold;
 
+            font-size: 0.9em;
+
             display: block;
 
         }
@@ -1198,15 +1316,17 @@
 
         .click-hint {
 
-            font-size: 0.75em;
+            margin-top: auto;
 
-            color: #666;
+            font-size: 0.65em;
+
+            color: #444;
 
             text-align: center;
 
-            padding: 8px;
+            padding-top: 6px;
 
-            background: rgba(0, 255, 136, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
 
         }
 
@@ -1238,15 +1358,15 @@
 
             justify-content: center;
 
-            gap: 6px;
+            gap: 5px;
 
-            margin-top: 8px;
+            margin-top: 4px;
 
-            padding-top: 6px;
+            padding-top: 4px;
 
             border-top: 1px dashed rgba(0, 255, 136, 0.2);
 
-            font-size: 0.75em;
+            font-size: 0.7em;
 
         }
 
@@ -1300,9 +1420,39 @@
 
         .medal-icon {
 
-            font-size: 1.2em;
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
 
             margin-bottom: 2px;
+
+        }
+
+        .medal-img {
+
+            width: 22px;
+
+            height: 22px;
+
+            object-fit: contain;
+
+        }
+
+        .medal-label .medal-img {
+
+            width: 22px;
+
+            height: 22px;
+
+        }
+
+        .history-item-beaten .medal-img {
+
+            width: 22px;
+
+            height: 22px;
 
         }
 
@@ -1455,6 +1605,24 @@
             gap: 4px;
 
             z-index: 10;
+
+        }
+
+        .season-badge {
+
+            position: absolute;
+
+            top: 10px;
+
+            left: 10px;
+
+            font-size: 18px;
+
+            z-index: 10;
+
+            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+
+            line-height: 1;
 
         }
 
@@ -1960,6 +2128,46 @@
 
         }
 
+        .path-input-group label {
+
+            color: #aaa;
+
+            font-size: 0.9em;
+
+            white-space: nowrap;
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
+        .path-input-group select {
+
+            padding: 6px 10px;
+
+            background: rgba(0, 0, 0, 0.5);
+
+            border: 1px solid rgba(0, 255, 136, 0.3);
+
+            border-radius: 4px;
+
+            color: #e0e0e0;
+
+            font-size: 0.9em;
+
+            cursor: pointer;
+
+        }
+
+        .path-input-group select option {
+
+            background: #1a1a2e;
+
+            color: #e0e0e0;
+
+        }
+
 
 
         .settings-help-text {
@@ -1997,6 +2205,88 @@
         .settings-status.error {
 
             color: #ff8c8c;
+
+        }
+
+
+
+        .settings-actions {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 10px;
+
+        }
+
+        .settings-danger-btn {
+
+            flex: 1;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 10px 14px;
+
+            background: rgba(255, 60, 60, 0.1);
+
+            border: 1px solid rgba(255, 80, 80, 0.4);
+
+            border-radius: 8px;
+
+            color: #ff6b6b;
+
+            font-size: 0.85em;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: all 0.2s ease;
+
+            white-space: nowrap;
+
+        }
+
+        .settings-danger-btn:hover {
+
+            background: rgba(255, 60, 60, 0.25);
+
+            border-color: rgba(255, 80, 80, 0.7);
+
+            color: #ff8888;
+
+            transform: translateY(-1px);
+
+            box-shadow: 0 4px 12px rgba(255, 60, 60, 0.15);
+
+        }
+
+        .settings-danger-btn:active {
+
+            transform: translateY(0);
+
+            background: rgba(255, 60, 60, 0.3);
+
+        }
+
+        .settings-danger-btn svg {
+
+            flex-shrink: 0;
+
+            opacity: 0.8;
+
+        }
+
+        .settings-danger-btn:hover svg {
+
+            opacity: 1;
 
         }
 
@@ -2328,6 +2618,128 @@
 
         }
 
+        .history-item-pb-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            margin-bottom: 6px;
+
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+
+        }
+
+        .history-item-pb {
+
+            color: #00ff88;
+
+            font-size: 0.78em;
+
+            font-weight: 600;
+
+        }
+
+        .history-item-beaten {
+
+            font-size: 0.85em;
+
+            display: flex;
+
+            gap: 3px;
+
+        }
+
+        .history-medal.unearned {
+
+            opacity: 0.3;
+
+            filter: saturate(0.3);
+
+        }
+
+        .history-medal.earned {
+
+            opacity: 1;
+
+            filter: drop-shadow(0 0 3px rgba(0, 255, 136, 0.4));
+
+        }
+
+        .toast-container {
+
+            position: fixed;
+
+            bottom: 20px;
+
+            right: 20px;
+
+            z-index: 9999;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+            pointer-events: none;
+
+        }
+
+        .toast {
+
+            background: rgba(16, 16, 28, 0.95);
+
+            border: 1px solid rgba(0, 255, 136, 0.4);
+
+            border-radius: 8px;
+
+            padding: 12px 18px;
+
+            color: #e0e0e0;
+
+            font-size: 0.85em;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+
+            animation: toastIn 0.3s ease;
+
+            pointer-events: auto;
+
+            max-width: 350px;
+
+        }
+
+        .toast.toast-out {
+
+            animation: toastOut 0.3s ease forwards;
+
+        }
+
+        .toast-success { border-color: #00ff88; }
+
+        .toast-error { border-color: #ff4444; }
+
+        .toast-info { border-color: #5cecff; }
+
+        @keyframes toastIn {
+
+            from { opacity: 0; transform: translateY(20px); }
+
+            to { opacity: 1; transform: translateY(0); }
+
+        }
+
+        @keyframes toastOut {
+
+            from { opacity: 1; transform: translateY(0); }
+
+            to { opacity: 0; transform: translateY(20px); }
+
+        }
+
 
 
         .history-drawer-footer {
@@ -2520,19 +2932,45 @@
 
                 <div class="medal-slider-container">
 
-                    <input type="range" id="medalSlider" min="0" max="4" value="0" class="medal-slider" oninput="updateMedalFilter(this.value)">
+                    <div class="medal-slider-track-wrap">
 
-                    <div class="medal-slider-labels">
+                        <div class="medal-slider-track"></div>
 
-                        <span class="medal-label" data-value="0" title="Show all maps" onclick="setMedalFilter(0)">All</span>
+                        <input type="range" id="medalSlider" min="0" max="4" value="0" class="medal-slider" oninput="updateMedalFilter(this.value)">
 
-                        <span class="medal-label" data-value="1" title="Maps where you haven't beaten Bronze time" onclick="setMedalFilter(1)">🥉</span>
+                        <div class="medal-track-markers">
 
-                        <span class="medal-label" data-value="2" title="Maps where you haven't beaten Silver time" onclick="setMedalFilter(2)">🥈</span>
+                            <span class="medal-track-marker active" data-value="0" style="left: calc(0% + 9px)" onclick="setMedalFilter(0)">
 
-                        <span class="medal-label" data-value="3" title="Maps where you haven't beaten Gold time" onclick="setMedalFilter(3)">🥇</span>
+                                <span class="marker-label">All</span>
 
-                        <span class="medal-label" data-value="4" title="Maps where you haven't beaten Author time" onclick="setMedalFilter(4)">⭐</span>
+                            </span>
+
+                            <span class="medal-track-marker" data-value="1" style="left: calc(25% + 4.5px)" onclick="setMedalFilter(1)">
+
+                                <img class="marker-img" src="img/medals/bronze.png" alt="Bronze">
+
+                            </span>
+
+                            <span class="medal-track-marker" data-value="2" style="left: 50%" onclick="setMedalFilter(2)">
+
+                                <img class="marker-img" src="img/medals/silver.png" alt="Silver">
+
+                            </span>
+
+                            <span class="medal-track-marker" data-value="3" style="left: calc(75% - 4.5px)" onclick="setMedalFilter(3)">
+
+                                <img class="marker-img" src="img/medals/gold.png" alt="Gold">
+
+                            </span>
+
+                            <span class="medal-track-marker" data-value="4" style="left: calc(100% - 9px)" onclick="setMedalFilter(4)">
+
+                                <img class="marker-img" src="img/medals/author.png" alt="Author">
+
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -2678,9 +3116,45 @@
 
                 <label>History</label>
 
-                <button class="settings-danger-btn" onclick="handleClearTrackHistory()">Clear latest played tracks history</button>
+                <div class="path-input-group">
 
-                <div class="settings-help-text">Remove all recently launched tracks from the history drawer.</div>
+                    <label>Remember</label>
+
+                    <select id="historyLimitSelect" onchange="saveHistoryLimit(this.value)">
+
+                        <option value="20">20 tracks</option>
+
+                        <option value="60">60 tracks</option>
+
+                        <option value="100">100 tracks</option>
+
+                        <option value="0">Unlimited</option>
+
+                    </select>
+
+                </div>
+
+                <div class="settings-help-text">How many recently played tracks to keep in the history drawer.</div>
+
+                <div class="settings-actions">
+
+                    <button class="settings-danger-btn" onclick="handleClearTrackHistory()">
+
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+
+                        Clear History
+
+                    </button>
+
+                    <button class="settings-danger-btn" onclick="handleClearCachedMaps()">
+
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+
+                        Clear Cached Maps
+
+                    </button>
+
+                </div>
 
                 <div id="historySettingsStatus" class="settings-status"></div>
 
@@ -2689,6 +3163,10 @@
         </div>
 
     </div>
+
+
+
+    <div id="toastContainer" class="toast-container"></div>
 
 
 
@@ -2706,7 +3184,14 @@
 
         const TRACK_HISTORY_KEY = 'trackLaunchHistory';
 
-        const MAX_TRACK_HISTORY = 20;
+        let historyLimit = 20;
+
+        const MEDAL_SVG = {
+            bronze: '<img class="medal-img" src="img/medals/bronze.png" alt="Bronze">',
+            silver: '<img class="medal-img" src="img/medals/silver.png" alt="Silver">',
+            gold: '<img class="medal-img" src="img/medals/gold.png" alt="Gold">',
+            author: '<img class="medal-img" src="img/medals/author.png" alt="Author">'
+        };
 
         
 
@@ -2730,7 +3215,9 @@
 
         let localPersonalBests = {};
 
-        
+        let preprocessedMaps = null;
+
+
 
         let colorFilters = {
 
@@ -2768,6 +3255,40 @@
 
 
 
+        function rendererLog(message) {
+
+            window.electronAPI.log(`[Renderer] ${message}`);
+
+        }
+
+
+
+        function showToast(message, type = 'info', durationMs = 4000) {
+
+            const container = document.getElementById('toastContainer');
+
+            if (!container) return;
+
+            const toast = document.createElement('div');
+
+            toast.className = `toast toast-${type}`;
+
+            toast.textContent = message;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+
+                toast.classList.add('toast-out');
+
+                setTimeout(() => toast.remove(), 300);
+
+            }, durationMs);
+
+        }
+
+
+
         // Save filter state to electron-store
 
         async function saveFilterState() {
@@ -2788,7 +3309,9 @@
 
                 seasonFilters,
 
-                medalFilter
+                medalFilter,
+
+                historyLimit
 
             };
 
@@ -2823,6 +3346,8 @@
                     if (saved.seasonFilters) Object.assign(seasonFilters, saved.seasonFilters);
 
                     if (saved.medalFilter !== undefined) medalFilter = saved.medalFilter;
+
+                    if (saved.historyLimit !== undefined) historyLimit = saved.historyLimit;
 
                 } catch (e) {}
 
@@ -3068,13 +3593,13 @@
 
             // Update label highlights
 
-            const labels = document.querySelectorAll('.medal-label');
+            const markers = document.querySelectorAll('.medal-track-marker');
 
-            labels.forEach(label => {
+            markers.forEach(marker => {
 
-                const labelValue = parseInt(label.getAttribute('data-value'), 10);
+                const markerValue = parseInt(marker.getAttribute('data-value'), 10);
 
-                label.classList.toggle('active', labelValue <= medalFilter);
+                marker.classList.toggle('active', markerValue <= medalFilter);
 
             });
 
@@ -3600,7 +4125,23 @@
 
         function addTrackToHistory(mapId, mapName) {
 
+            rendererLog(`[History] addTrackToHistory called: mapId=${mapId}, mapName=${mapName}, allMaps.length=${allMaps.length}`);
+
             trackHistory = trackHistory.filter(item => item.mapId !== mapId);
+
+            const mapData = allMaps.find(m => String(m.MapId) === String(mapId));
+            rendererLog(`[History] mapData found: ${!!mapData}, MapUid=${mapData?.MapUid || 'N/A'}`);
+
+            const medals = mapData?.Medals ? {
+                Bronze: mapData.Medals.Bronze || null,
+                Silver: mapData.Medals.Silver || null,
+                Gold: mapData.Medals.Gold || null,
+                Author: mapData.Medals.Author || null
+            } : null;
+            const pbTime = mapData ? getPersonalBestTime(mapData) : null;
+            const mapUid = mapData?.MapUid || null;
+
+            rendererLog(`[History] medals=${JSON.stringify(medals)}, pbTime=${pbTime}, mapUid=${mapUid}`);
 
             trackHistory.unshift({
 
@@ -3608,15 +4149,51 @@
 
                 mapName,
 
-                playedAt: new Date().toISOString()
+                mapUid,
+
+                playedAt: new Date().toISOString(),
+
+                medals,
+
+                pbTime
 
             });
 
-            trackHistory = trackHistory.slice(0, MAX_TRACK_HISTORY);
+            trackHistory = trackHistory.slice(0, historyLimit > 0 ? historyLimit : 999999);
+
+            rendererLog(`[History] trackHistory now has ${trackHistory.length} items`);
 
             saveTrackHistory();
 
             renderTrackHistory();
+
+            if (pbTime) {
+
+                const pbFormatted = formatTime(pbTime);
+
+                let beatenMedals = [];
+
+                if (medals) {
+
+                    if (medals.Author && pbTime <= normalizeRecordTime(medals.Author)) beatenMedals.push('Author');
+
+                    if (medals.Gold && pbTime <= normalizeRecordTime(medals.Gold)) beatenMedals.push('Gold');
+
+                    if (medals.Silver && pbTime <= normalizeRecordTime(medals.Silver)) beatenMedals.push('Silver');
+
+                    if (medals.Bronze && pbTime <= normalizeRecordTime(medals.Bronze)) beatenMedals.push('Bronze');
+
+                }
+
+                const beatenText = beatenMedals.length > 0 ? ` | Beat: ${beatenMedals.join(', ')}` : '';
+
+                showToast(`${mapName} added | PB: ${pbFormatted}${beatenText}`, 'success', 4000);
+
+            } else {
+
+                showToast(`${mapName} added to history`, 'info', 3000);
+
+            }
 
         }
 
@@ -3676,21 +4253,81 @@
 
 
 
-        function renderTrackHistory() {
+        function resolveEffectivePb(item) {
 
-            const container = document.getElementById('historyList');
+            let pb = (typeof item.pbTime === 'number' && item.pbTime > 0) ? item.pbTime : null;
 
-            if (!trackHistory.length) {
+            if (item.mapUid && localPersonalBests[item.mapUid]) {
 
-                container.innerHTML = '<div class="history-empty">No tracks launched yet.</div>';
+                const localPb = (typeof localPersonalBests[item.mapUid] === 'number' && localPersonalBests[item.mapUid] > 0) ? localPersonalBests[item.mapUid] : null;
 
-                return;
+                if (localPb && (!pb || localPb < pb)) pb = localPb;
 
             }
 
+            return pb;
+
+        }
 
 
-            container.innerHTML = `<div class="history-list">${trackHistory.map(item => `
+
+        function buildHistoryItemHtml(item) {
+
+            let medalsHtml = '';
+
+            try {
+
+                const effectivePb = resolveEffectivePb(item);
+
+                let medalsRowHtml = '';
+
+                if (item.medals) {
+
+                    const m = item.medals;
+
+                    const medalDefs = [
+
+                        [m.Bronze, MEDAL_SVG.bronze],
+
+                        [m.Silver, MEDAL_SVG.silver],
+
+                        [m.Gold, MEDAL_SVG.gold],
+
+                        [m.Author, MEDAL_SVG.author]
+
+                    ];
+
+                    medalsRowHtml = medalDefs.map(([time, svg]) => {
+
+                        const earned = time > 0 && effectivePb && effectivePb <= time;
+
+                        return `<span class="history-medal${earned ? ' earned' : ' unearned'}">${svg}</span>`;
+
+                    }).join('');
+
+                }
+
+                const pbDisplay = effectivePb ? formatTime(effectivePb) : null;
+
+                if (medalsRowHtml) {
+
+                    medalsHtml = `<div class="history-item-pb-row">${pbDisplay ? `<span class="history-item-pb">PB ${pbDisplay}</span>` : ''}<span class="history-item-beaten">${medalsRowHtml}</span></div>`;
+
+                } else if (pbDisplay) {
+
+                    medalsHtml = `<div class="history-item-pb-row"><span class="history-item-pb">PB ${pbDisplay}</span></div>`;
+
+                }
+
+            } catch (e) {
+
+                rendererLog(`[History] buildHistoryItemHtml ERROR for mapId=${item.mapId}: ${e.message}`);
+
+                medalsHtml = '';
+
+            }
+
+            return `
 
                 <div class="history-item" onclick="reopenHistoryTrack('${item.mapId}')">
 
@@ -3704,6 +4341,8 @@
 
                         <div class="history-item-name">${escapeHtml(item.mapName || `Track ${item.mapId}`)}</div>
 
+                        ${medalsHtml}
+
                         <div class="history-item-meta">
 
                             <span>ID: ${item.mapId}</span>
@@ -3716,7 +4355,35 @@
 
                 </div>
 
-            `).join('')}</div>`;
+            `;
+
+        }
+
+
+
+        function renderTrackHistory() {
+
+            const container = document.getElementById('historyList');
+
+            rendererLog(`[History] renderTrackHistory called, trackHistory.length=${trackHistory.length}`);
+
+            if (!trackHistory.length) {
+
+                container.innerHTML = '<div class="history-empty">No tracks launched yet.</div>';
+
+                return;
+
+            }
+
+            for (const item of trackHistory) {
+
+                rendererLog(`[History] Rendering item: mapId=${item.mapId}, medals=${JSON.stringify(item.medals)}, pbTime=${item.pbTime}, mapUid=${item.mapUid}`);
+
+            }
+
+            container.innerHTML = `<div class="history-list">${trackHistory.map(item => buildHistoryItemHtml(item)).join('')}</div>`;
+
+            rendererLog(`[History] renderTrackHistory done, rendered ${trackHistory.length} items`);
 
         }
 
@@ -3724,13 +4391,138 @@
 
         function openHistoryDrawer() {
 
+            rendererLog(`[History] openHistoryDrawer called, trackHistory.length=${trackHistory.length}`);
+
+            renderTrackHistory();
+
             document.getElementById('historyDrawer').classList.add('open');
 
             document.getElementById('historyDrawerOverlay').classList.add('open');
 
             document.getElementById('historyDrawer').setAttribute('aria-hidden', 'false');
 
+            if (trackHistory.length > 0) {
+
+                let pbCount = 0;
+
+                let beatenCount = 0;
+
+                for (const item of trackHistory) {
+
+                    const effectivePb = resolveEffectivePb(item);
+
+                    if (effectivePb) {
+
+                        pbCount++;
+
+                        if (item.medals) {
+
+                            const medals = item.medals;
+
+                            if ((medals.Author > 0 && effectivePb <= medals.Author) || (medals.Gold > 0 && effectivePb <= medals.Gold)) {
+
+                                beatenCount++;
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                rendererLog(`[History] Toast summary: ${trackHistory.length} tracks, ${pbCount} with PB, ${beatenCount} with gold+ beaten`);
+
+                if (pbCount > 0) {
+
+                    showToast(`${trackHistory.length} tracks played | ${pbCount} with PB | ${beatenCount} gold+ beaten`, 'info', 3000);
+
+                } else {
+
+                    showToast(`${trackHistory.length} tracks played | No PBs recorded yet`, 'info', 3000);
+
+                }
+
+            } else {
+
+                showToast('No tracks played yet', 'info', 2000);
+
+            }
+
         }
+
+
+
+        function enrichHistoryWithMapData() {
+
+            if (!allMaps.length || !trackHistory.length) return;
+
+            const mapsById = new Map(allMaps.map(m => [String(m.MapId), m]));
+
+            let changed = false;
+
+            for (const item of trackHistory) {
+
+                if (item.medals && item.pbTime && item.mapUid) continue;
+
+                const mapData = mapsById.get(String(item.mapId));
+
+                if (!mapData) continue;
+
+                if (!item.mapUid && mapData.MapUid) {
+
+                    item.mapUid = mapData.MapUid;
+
+                    changed = true;
+
+                }
+
+                if (!item.medals && mapData.Medals) {
+
+                    item.medals = {
+
+                        Bronze: mapData.Medals.Bronze || null,
+
+                        Silver: mapData.Medals.Silver || null,
+
+                        Gold: mapData.Medals.Gold || null,
+
+                        Author: mapData.Medals.Author || null
+
+                    };
+
+                    changed = true;
+
+                }
+
+                if (!item.pbTime) {
+
+                    const pb = getPersonalBestTime(mapData);
+
+                    if (pb) {
+
+                        item.pbTime = pb;
+
+                        changed = true;
+
+                    }
+
+                }
+
+            }
+
+            if (changed) {
+
+                rendererLog(`[History] enrichHistoryWithMapData: enriched ${trackHistory.length} items`);
+
+                saveTrackHistory();
+
+                renderTrackHistory();
+
+            }
+
+        }
+
 
 
 
@@ -3786,6 +4578,28 @@
 
 
 
+        function saveHistoryLimit(value) {
+
+            historyLimit = parseInt(value, 10) || 0;
+
+            if (historyLimit > 0 && trackHistory.length > historyLimit) {
+
+                trackHistory = trackHistory.slice(0, historyLimit);
+
+                saveTrackHistory();
+
+                renderTrackHistory();
+
+            }
+
+            saveFilterState();
+
+            rendererLog(`[Settings] History limit set to ${historyLimit === 0 ? 'unlimited' : historyLimit}`);
+
+        }
+
+
+
         function handleClearTrackHistory() {
 
             const result = clearTrackHistory();
@@ -3797,6 +4611,36 @@
             } else {
 
                 setHistorySettingsStatus(`Failed to clear history: ${result.error || 'Unknown error'}`, 'error');
+
+            }
+
+        }
+
+
+
+        async function handleClearCachedMaps() {
+
+            try {
+
+                const result = await window.electronAPI.clearCachedMaps();
+
+                if (result.success) {
+
+                    cachedMapsIds.clear();
+
+                    setHistorySettingsStatus(`Cleared ${result.count} cached map(s).`, 'success');
+
+                    if (allMaps.length) applyFilters();
+
+                } else {
+
+                    setHistorySettingsStatus(`Failed to clear cache: ${result.error || 'Unknown error'}`, 'error');
+
+                }
+
+            } catch (error) {
+
+                setHistorySettingsStatus(`Failed to clear cache: ${error.message}`, 'error');
 
             }
 
@@ -4028,7 +4872,7 @@ async function fetchMaps() {
 
                 // Check cached status in batches for performance
 
-                const batchSize = 10;
+                const batchSize = 50;
 
                 for (let i = 0; i < allMaps.length; i += batchSize) {
 
@@ -4050,6 +4894,10 @@ async function fetchMaps() {
 
                 updateSeasonCounts();
 
+                enrichHistoryWithMapData();
+
+                preprocessMaps();
+
                 applyFilters();
 
             } catch (error) {
@@ -4062,147 +4910,59 @@ async function fetchMaps() {
 
 
 
-        // Apply all filters and sorting
-
         function applyFilters() {
 
-            let filtered = [...allMaps];
+            if (!preprocessedMaps) preprocessMaps();
 
-            
-
-            // Apply search filter
+            let filtered = preprocessedMaps;
 
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
 
-            if (searchTerm) {
-
-                filtered = filtered.filter(map => 
-
-                    map.Name.toLowerCase().includes(searchTerm)
-
-                );
-
-            }
-
-            
-
-            // Apply cached include/exclude filter
-
-            if (!includeCached) {
-
-                filtered = filtered.filter(map => !cachedMapsIds.has(map.MapId));
-
-            }
-
-            
-
-            // Apply color filters
-
-            filtered = filtered.filter(map => {
-
-                const match = map.Name.match(/(\d{4})\s*-\s*(\d{1,2})$/);
-
-                if (!match) {
-
-                    return colorFilters.unclassified;
-
-                }
-
-                const num = parseInt(match[2], 10);
-
-                if (num >= 1 && num <= 5) return colorFilters.white;
-
-                if (num >= 6 && num <= 10) return colorFilters.green;
-
-                if (num >= 11 && num <= 15) return colorFilters.yellow;
-
-                if (num >= 16 && num <= 20) return colorFilters.red;
-
-                if (num >= 21 && num <= 25) return colorFilters.black;
-
-                return colorFilters.unclassified;
-
-            });
-
-            
-
-            // Apply season filters
+            const allColorActive = colorFilters.white && colorFilters.green && colorFilters.yellow && colorFilters.red && colorFilters.black && colorFilters.unclassified;
 
             const hasSeasonFilter = Object.values(seasonFilters).some(v => !v);
 
-            if (hasSeasonFilter) {
+            const hasMedalFilter = (tmxUserName || tmxUserId) && medalFilter > 0;
 
-                filtered = filtered.filter(map => {
+            // Single-pass filter combining all conditions
 
-                    const name = map.Name;
+            filtered = filtered.filter(({ map, lowerName, colorIndex, season }) => {
 
-                    if (name.match(/Winter\s+\d{4}/i)) return seasonFilters.Winter;
+                if (searchTerm && !lowerName.includes(searchTerm)) return false;
 
-                    if (name.match(/Spring\s+\d{4}/i)) return seasonFilters.Spring;
+                if (!includeCached && cachedMapsIds.has(map.MapId)) return false;
 
-                    if (name.match(/Summer\s+\d{4}/i)) return seasonFilters.Summer;
+                if (!allColorActive && !colorFilters[colorIndex]) return false;
 
-                    if (name.match(/Fall\s+\d{4}/i)) return seasonFilters.Autumn;
+                if (hasSeasonFilter && season && !seasonFilters[season]) return false;
 
-                    return true;
-
-                });
-
-            }
-
-            
-
-            // Apply medal filter (only if TMX user is set)
-
-            if ((tmxUserName || tmxUserId) && medalFilter > 0) {
-
-                filtered = filtered.filter(map => {
+                if (hasMedalFilter) {
 
                     const pbTime = getPersonalBestTime(map);
 
-                    
+                    const medals = map.Medals;
 
-                    const bronzeTime = normalizeRecordTime(map.Medals?.Bronze);
+                    const targetTime = medalFilter === 1 ? normalizeRecordTime(medals?.Bronze)
 
-                    const silverTime = normalizeRecordTime(map.Medals?.Silver);
+                        : medalFilter === 2 ? normalizeRecordTime(medals?.Silver)
 
-                    const goldTime = normalizeRecordTime(map.Medals?.Gold);
+                        : medalFilter === 3 ? normalizeRecordTime(medals?.Gold)
 
-                    const authorTime = normalizeRecordTime(map.Medals?.Author);
+                        : normalizeRecordTime(medals?.Author);
 
-                    
+                    if (targetTime && pbTime && pbTime <= targetTime) return false;
 
-                    switch (medalFilter) {
+                    if (!targetTime) return false;
 
-                        case 1: // Haven't beaten Bronze
+                }
 
-                            return bronzeTime && (!pbTime || pbTime > bronzeTime);
+                return true;
 
-                        case 2: // Haven't beaten Silver
+            });
 
-                            return silverTime && (!pbTime || pbTime > silverTime);
 
-                        case 3: // Haven't beaten Gold
 
-                            return goldTime && (!pbTime || pbTime > goldTime);
-
-                        case 4: // Haven't beaten Author
-
-                            return authorTime && (!pbTime || pbTime > authorTime);
-
-                        default:
-
-                            return true;
-
-                    }
-
-                });
-
-            }
-
-            
-
-            // Apply sorting
+            // Sorting
 
             const sortBy = document.getElementById('sortSelect').value;
 
@@ -4210,37 +4970,19 @@ async function fetchMaps() {
 
             filtered.sort((a, b) => {
 
-                const extractNumber = (name) => {
-
-                    const match = name.match(/(\d+)/);
-
-                    return match ? parseInt(match[1], 10) : 0;
-
-                };
-
-                
-
                 switch (sortBy) {
 
-                    case 'mapId': return ((a.MapId || 0) - (b.MapId || 0)) * multiplier;
+                    case 'mapId': return ((a.map.MapId || 0) - (b.map.MapId || 0)) * multiplier;
 
-                    case 'natural': {
+                    case 'natural': return (a.naturalNumber - b.naturalNumber) * multiplier;
 
-                        const numA = extractNumber(a.Name);
+                    case 'name': return a.map.Name.localeCompare(b.map.Name) * multiplier;
 
-                        const numB = extractNumber(b.Name);
+                    case 'downloads': return ((b.map.DownloadCount || 0) - (a.map.DownloadCount || 0)) * multiplier;
 
-                        return (numA - numB) * multiplier;
+                    case 'awards': return ((b.map.AwardCount || 0) - (a.map.AwardCount || 0)) * multiplier;
 
-                    }
-
-                    case 'name': return a.Name.localeCompare(b.Name) * multiplier;
-
-                    case 'downloads': return ((b.DownloadCount || 0) - (a.DownloadCount || 0)) * multiplier;
-
-                    case 'awards': return ((b.AwardCount || 0) - (a.AwardCount || 0)) * multiplier;
-
-                    case 'difficulty': return ((a.Difficulty || 0) - (b.Difficulty || 0)) * multiplier;
+                    case 'difficulty': return ((a.map.Difficulty || 0) - (b.map.Difficulty || 0)) * multiplier;
 
                     default: return 0;
 
@@ -4248,15 +4990,9 @@ async function fetchMaps() {
 
             });
 
-            
-
             updateStats(allMaps.length, filtered.length);
 
-            
-
-            // Display maps
-
-            displayMaps(filtered);
+            displayMaps(filtered.map(e => e.map));
 
         }
 
@@ -4298,29 +5034,84 @@ async function fetchMaps() {
 
 
 
+        const _seasonClassMap = {
+            1: 'border-white', 2: 'border-white', 3: 'border-white', 4: 'border-white', 5: 'border-white',
+            6: 'border-green', 7: 'border-green', 8: 'border-green', 9: 'border-green', 10: 'border-green',
+            11: 'border-yellow', 12: 'border-yellow', 13: 'border-yellow', 14: 'border-yellow', 15: 'border-yellow',
+            16: 'border-red', 17: 'border-red', 18: 'border-red', 19: 'border-red', 20: 'border-red',
+            21: 'border-black', 22: 'border-black', 23: 'border-black', 24: 'border-black', 25: 'border-black'
+        };
+
         function getSeasonBorderClass(name) {
 
             const match = name.match(/(\d{4})\s*-\s*(\d{1,2})$/);
 
             if (!match) return '';
 
-            const num = parseInt(match[2], 10);
+            return _seasonClassMap[parseInt(match[2], 10)] || '';
 
-            if (num >= 1 && num <= 5) return 'border-white';
+        }
 
-            if (num >= 6 && num <= 10) return 'border-green';
+        const _colorIndexMap = {
+            1: 'white', 2: 'white', 3: 'white', 4: 'white', 5: 'white',
+            6: 'green', 7: 'green', 8: 'green', 9: 'green', 10: 'green',
+            11: 'yellow', 12: 'yellow', 13: 'yellow', 14: 'yellow', 15: 'yellow',
+            16: 'red', 17: 'red', 18: 'red', 19: 'red', 20: 'red',
+            21: 'black', 22: 'black', 23: 'black', 24: 'black', 25: 'black'
+        };
 
-            if (num >= 11 && num <= 15) return 'border-yellow';
+        const _seasonRegex = /(Winter|Spring|Summer|Fall)\s+\d{4}/i;
 
-            if (num >= 16 && num <= 20) return 'border-red';
+        const _seasonEmojis = { Winter: '❄️', Spring: '🌸', Summer: '☀️', Fall: '🍂' };
 
-            if (num >= 21 && num <= 25) return 'border-black';
+        const _mapNumberRegex = /(\d{4})\s*-\s*(\d{1,2})$/;
 
-            return '';
+        function preprocessMaps() {
+
+            if (!allMaps.length) { preprocessedMaps = []; return; }
+
+            preprocessedMaps = allMaps.map(map => {
+
+                const name = map.Name;
+
+                const lowerName = name.toLowerCase();
+
+                const numMatch = name.match(_mapNumberRegex);
+
+                const mapNumber = numMatch ? parseInt(numMatch[2], 10) : null;
+
+                const colorIndex = mapNumber ? _colorIndexMap[mapNumber] || 'unclassified' : 'unclassified';
+
+                const seasonMatch = name.match(_seasonRegex);
+
+                const season = seasonMatch ? seasonMatch[1] : null;
+
+                const naturalNumber = (name.match(/(\d+)/) || [])[1];
+
+                return { map, lowerName, colorIndex, season, naturalNumber: naturalNumber ? parseInt(naturalNumber, 10) : 0 };
+
+            });
 
         }
 
 
+
+        function buildMedalHtml(pbTime, medalKey, medalTime, icon) {
+
+            const cls = getMedalClaimClass(pbTime, medalTime);
+
+            return `<div class="medal medal-${medalKey}${cls}"><span class="medal-icon">${icon}</span><span class="medal-time">${formatTime(medalTime)}</span></div>`;
+
+        }
+
+        const _cachedSvgHtml = `<div class="cached-indicator"><svg class="cached-icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Cached</div>`;
+
+        const _medalMeta = [
+            ['bronze', MEDAL_SVG.bronze, 'Bronze'],
+            ['silver', MEDAL_SVG.silver, 'Silver'],
+            ['gold', MEDAL_SVG.gold, 'Gold'],
+            ['author', MEDAL_SVG.author, 'Author']
+        ];
 
         function displayMaps(maps) {
 
@@ -4338,113 +5129,93 @@ async function fetchMaps() {
 
 
 
-            const html = `<div class="maps-grid">${maps.map(map => {
+            // Pre-compute per-map data in a single pass
+
+            const mapData = maps.map(map => {
 
                 const pbTime = getPersonalBestTime(map);
 
+                const medals = map.Medals || {};
+
+                const medalHtml = _medalMeta.map(([key, icon, prop]) =>
+
+                    buildMedalHtml(pbTime, key, medals[prop], icon)
+
+                ).join('');
+
+                return { map, pbTime, medalHtml };
+
+            });
+
+
+
+            const html = `<div class="maps-grid">${mapData.map(({ map, pbTime, medalHtml }) => {
+
+                const escapedName = escapeHtml(map.Name);
+
+                const nameAttr = map.Name.replace(/'/g, "\\'");
+
+                const borderClass = getSeasonBorderClass(map.Name);
+
+                const isCached = cachedMapsIds.has(map.MapId);
+
+                const seasonMatch = map.Name.match(_seasonRegex);
+
+                const seasonBadge = seasonMatch ? `<span class="season-badge season-${seasonMatch[1].toLowerCase()}">${_seasonEmojis[seasonMatch[1]]}</span>` : '';
+
+                const diffClass = getDifficultyClass(map.Difficulty);
+
+                const diffName = getDifficultyName(map.Difficulty);
+
+                const downloads = (map.DownloadCount || 0).toLocaleString();
+
+                const awards = map.AwardCount || 0;
+
+                const replays = map.ReplayCount || 0;
+
+                const pbHtml = renderPersonalBest(map, pbTime);
+
                 return `
 
-                <div class="map-card ${getSeasonBorderClass(map.Name)}" onclick="handleMapClick(event, '${map.MapId}', '${map.Name.replace(/'/g, "\\'")}')">
+                <div class="map-card ${borderClass}" onclick="handleMapClick(event, '${map.MapId}', '${nameAttr}')">
 
-                    ${cachedMapsIds.has(map.MapId) ? `
+                    ${isCached ? _cachedSvgHtml : ''}
 
-                    <div class="cached-indicator">
-
-                        <svg class="cached-icon" viewBox="0 0 24 24">
-
-                            <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-
-                        </svg>
-
-                        Cached
-
-                    </div>` : ''}
+                    ${seasonBadge}
 
                     <div class="map-image">
 
-                        <img src="https://trackmania.exchange/mapthumb/${map.MapId}" alt="${map.Name}" loading="lazy" onerror="this.parentElement.innerHTML='No Image'">
+                        <img src="https://trackmania.exchange/mapthumb/${map.MapId}" alt="${escapedName}" loading="lazy" onerror="this.parentElement.innerHTML='No Image'">
 
                     </div>
 
                     <div class="map-info">
 
-                        <div class="map-name">${escapeHtml(map.Name)}</div>
+                        <div class="map-name">${escapedName}</div>
 
                         <div class="map-details">
 
-                            <span class="difficulty ${getDifficultyClass(map.Difficulty)}">${getDifficultyName(map.Difficulty)}</span>
+                            <span class="difficulty ${diffClass}">${diffName}</span>
 
                         </div>
 
                         <div class="stats">
 
-                            <div class="stat">
+                            <div class="stat"><span class="stat-value">${downloads}</span>Downloads</div>
 
-                                <span class="stat-value">${(map.DownloadCount || 0).toLocaleString()}</span>
+                            <div class="stat"><span class="stat-value">${awards}</span>Awards</div>
 
-                                Downloads
-
-                            </div>
-
-                            <div class="stat">
-
-                                <span class="stat-value">${map.AwardCount || 0}</span>
-
-                                Awards
-
-                            </div>
-
-                            <div class="stat">
-
-                                <span class="stat-value">${map.ReplayCount || 0}</span>
-
-                                Replays
-
-                            </div>
+                            <div class="stat"><span class="stat-value">${replays}</span>Replays</div>
 
                         </div>
 
-                        <div class="medals-row">
+                        <div class="medals-row">${medalHtml}</div>
 
-                            <div class="medal medal-bronze${getMedalClaimClass(pbTime, map.Medals?.Bronze)}">
+                        ${pbHtml}
 
-                                <span class="medal-icon">🥉</span>
-
-                                <span class="medal-time">${formatTime(map.Medals?.Bronze)}</span>
-
-                            </div>
-
-                            <div class="medal medal-silver${getMedalClaimClass(pbTime, map.Medals?.Silver)}">
-
-                                <span class="medal-icon">🥈</span>
-
-                                <span class="medal-time">${formatTime(map.Medals?.Silver)}</span>
-
-                            </div>
-
-                            <div class="medal medal-gold${getMedalClaimClass(pbTime, map.Medals?.Gold)}">
-
-                                <span class="medal-icon">🥇</span>
-
-                                <span class="medal-time">${formatTime(map.Medals?.Gold)}</span>
-
-                            </div>
-
-                            <div class="medal medal-author${getMedalClaimClass(pbTime, map.Medals?.Author)}">
-
-                                <span class="medal-icon">⭐</span>
-
-                                <span class="medal-time">${formatTime(map.Medals?.Author)}</span>
-
-                            </div>
-
-                        </div>
-
-                        ${renderPersonalBest(map)}
+                        <div class="click-hint">Ctrl+Click to open in browser</div>
 
                     </div>
-
-                    <div class="click-hint">🌐 Ctrl+Click to open in browser</div>
 
                 </div>
 
@@ -4460,13 +5231,13 @@ async function fetchMaps() {
 
 
 
+        const _escapeDiv = document.createElement('div');
+
         function escapeHtml(text) {
 
-            const div = document.createElement('div');
+            _escapeDiv.textContent = text;
 
-            div.textContent = text;
-
-            return div.innerHTML;
+            return _escapeDiv.innerHTML;
 
         }
 
@@ -4582,9 +5353,9 @@ async function fetchMaps() {
 
 
 
-        function renderPersonalBest(map) {
+        function renderPersonalBest(map, precomputedPb) {
 
-            const pbTime = getPersonalBestTime(map);
+            const pbTime = precomputedPb !== undefined ? precomputedPb : getPersonalBestTime(map);
 
             if (!tmxUserName && !tmxUserId && !pbTime) return '';
 
@@ -4737,6 +5508,8 @@ async function fetchMaps() {
             setHistorySettingsStatus('', '');
 
             setTmxSettingsStatus('', '');
+
+            document.getElementById('historyLimitSelect').value = String(historyLimit);
 
         }
 
