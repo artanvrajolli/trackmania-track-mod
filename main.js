@@ -3,6 +3,8 @@ const path = require('path');
 const { spawn, execSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
+const http = require('http');
+const https = require('https');
 const gbxremote = require('gbxremote');
 
 let config = {};
@@ -194,6 +196,28 @@ let localPbCache = null;
 let localPbCacheAt = 0;
 const LOCAL_PB_CACHE_TTL_MS = 60 * 1000;
 
+const UBISOFT_APP_ID = '86263886-327a-4328-ac69-527f0d20a237';
+const UBISERVICES_SESSION_URL = 'https://public-ubiservices.ubi.com/v3/profiles/sessions';
+const NADEO_AUTH_URL = 'https://prod.trackmania.core.nadeo.online/v2/authentication/token/ubiservices';
+const NADEO_AUTH_BASIC_URL = 'https://prod.trackmania.core.nadeo.online/v2/authentication/token/basic';
+const NADEO_RECORDS_URL = 'https://prod.trackmania.core.nadeo.online/v2/accounts';
+const NADEO_MAPS_BY_UID_URL = 'https://prod.trackmania.core.nadeo.online/maps';
+const TM_OAUTH_AUTHORIZE = 'https://api.trackmania.com/oauth/authorize';
+const TM_OAUTH_TOKEN = 'https://api.trackmania.com/api/access_token';
+
+let nadeoTokens = { accessToken: null, refreshToken: null };
+let nadeoAccountId = null;
+let nadeoPbCache = null;
+let nadeoPbCacheAt = 0;
+const NADEO_PB_CACHE_TTL_MS = 60 * 1000;
+let oauthServer = null;
+
+let tmioPbCache = null;
+let tmioPbCacheAt = 0;
+const TMIO_PB_CACHE_TTL_MS = 60 * 1000;
+const TMIO_API_BASE = 'https://trackmania.io/api';
+const TMIO_RATE_LIMIT_MS = 1600; // ~40 requests per minute
+
 function log(message) {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] ${message}\n`;
@@ -270,6 +294,479 @@ async function loadLocalPersonalBests() {
     localPbCache = results;
     localPbCacheAt = now;
     return localPbCache;
+}
+
+function httpsRequest(url, options = {}) {
+    return new Promise((resolve, reject) => {
+        const parsedUrl = new URL(url);
+        const protocol = parsedUrl.protocol === 'https:' ? https : http;
+
+        const reqOptions = {
+            hostname: parsedUrl.hostname,
+            port: parsedUrl.port,
+            path: parsedUrl.pathname + parsedUrl.search,
+            method: options.method || 'GET',
+            headers: options.headers || {},
+        };
+
+        const req = protocol.request(reqOptions, (res) => {
+            let data = '';
+            res.on('data', (chunk) => { data += chunk; });
+            res.on('end', () => {
+                resolve({ status: res.statusCode, headers: res.headers, body: data });
+            });
+        });
+
+        req.on('error', reject);
+
+        if (options.body) {
+            req.write(options.body);
+        }
+        req.end();
+    });
+}
+
+async function getUbisoftTicket(email, password) {
+    const credentials = Buffer.from(`${email}:${password}`).toString('base64');
+    const response = await httpsRequest(UBISERVICES_SESSION_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Ubi-AppId': UBISOFT_APP_ID,
+            'Authorization': `Basic ${credentials}`,
+            'User-Agent': 'TrackmaniaMapViewer/1.0',
+        },
+        body: JSON.stringify({}),
+    });
+
+    if (response.status !== 200) {
+        let errorMsg = `Ubisoft auth failed (${response.status})`;
+        try {
+            const parsed = JSON.parse(response.body);
+            if (parsed.message) errorMsg = parsed.message;
+        } catch {}
+        throw new Error(errorMsg);
+    }
+
+    const data = JSON.parse(response.body);
+    return { ticket: data.ticket, accountId: data.userId };
+}
+
+async function getNadeoToken(ticket, audience = 'NadeoServices') {
+    const response = await httpsRequest(NADEO_AUTH_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `ubi_v1 t=${ticket}`,
+            'User-Agent': 'TrackmaniaMapViewer/1.0',
+        },
+        body: JSON.stringify({ audience }),
+    });
+
+    if (response.status !== 200) {
+        throw new Error(`Nadeo token exchange failed (${response.status})`);
+    }
+
+    const data = JSON.parse(response.body);
+    return { accessToken: data.accessToken, refreshToken: data.refreshToken };
+}
+
+async function refreshNadeoToken(audience = 'NadeoServices') {
+    if (!nadeoTokens.refreshToken) {
+        throw new Error('No refresh token available');
+    }
+
+    const response = await httpsRequest(NADEO_AUTH_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `nadeo_v1 t=${nadeoTokens.refreshToken}`,
+            'User-Agent': 'TrackmaniaMapViewer/1.0',
+        },
+        body: JSON.stringify({ audience }),
+    });
+
+    if (response.status !== 200) {
+        throw new Error(`Nadeo token refresh failed (${response.status})`);
+    }
+
+    const data = JSON.parse(response.body);
+    nadeoTokens.accessToken = data.accessToken;
+    nadeoTokens.refreshToken = data.refreshToken;
+    config.nadeoTokens = nadeoTokens;
+    saveConfig();
+    return nadeoTokens.accessToken;
+}
+
+async function nadeoApiRequest(url, retries = 1) {
+    if (!nadeoTokens.accessToken) {
+        throw new Error('Not authenticated with Nadeo');
+    }
+
+    const response = await httpsRequest(url, {
+        headers: {
+            'Authorization': `nadeo_v1 t=${nadeoTokens.accessToken}`,
+            'User-Agent': 'TrackmaniaMapViewer/1.0',
+        },
+    });
+
+    if (response.status === 401 && retries > 0) {
+        await refreshNadeoToken();
+        return nadeoApiRequest(url, retries - 1);
+    }
+
+    if (response.status !== 200) {
+        throw new Error(`Nadeo API error (${response.status}): ${response.body}`);
+    }
+
+    return JSON.parse(response.body);
+}
+
+async function translateMapUids(mapUids) {
+    if (!mapUids.length) return {};
+
+    const results = {};
+    const batchSize = 100;
+    for (let i = 0; i < mapUids.length; i += batchSize) {
+        const batch = mapUids.slice(i, i + batchSize);
+        const uidList = batch.join(',');
+        try {
+            const data = await nadeoApiRequest(
+                `${NADEO_MAPS_BY_UID_URL}?mapUidList=${encodeURIComponent(uidList)}`
+            );
+            for (const map of data) {
+                if (map.mapUid && map.mapId) {
+                    results[map.mapUid] = map.mapId;
+                }
+            }
+        } catch (error) {
+            log(`Map UID translation batch failed: ${error.message}`);
+        }
+    }
+    return results;
+}
+
+async function fetchNadeoPbs(mapUids) {
+    const now = Date.now();
+    if (nadeoPbCache && now - nadeoPbCacheAt < NADEO_PB_CACHE_TTL_MS) {
+        return nadeoPbCache;
+    }
+
+    if (!nadeoTokens.accessToken || !nadeoAccountId) {
+        return {};
+    }
+
+    try {
+        const uidToId = await translateMapUids(mapUids);
+        const mapIds = Object.values(uidToId);
+        if (!mapIds.length) {
+            nadeoPbCache = {};
+            nadeoPbCacheAt = now;
+            return nadeoPbCache;
+        }
+
+        const idToUid = {};
+        for (const [uid, id] of Object.entries(uidToId)) {
+            idToUid[id] = uid;
+        }
+
+        const results = {};
+        const batchSize = 50;
+        for (let i = 0; i < mapIds.length; i += batchSize) {
+            const batch = mapIds.slice(i, i + batchSize);
+            const idList = batch.join(',');
+            try {
+                const records = await nadeoApiRequest(
+                    `${NADEO_RECORDS_URL}/${nadeoAccountId}/mapRecords?mapIdList=${idList}`
+                );
+                for (const record of records) {
+                    const uid = idToUid[record.mapId];
+                    if (uid && record.recordScore && typeof record.recordScore.time === 'number') {
+                        results[uid] = {
+                            time: record.recordScore.time,
+                            medal: record.medal,
+                            timestamp: record.timestamp,
+                        };
+                    }
+                }
+            } catch (error) {
+                log(`Nadeo PB batch fetch failed: ${error.message}`);
+            }
+        }
+
+        nadeoPbCache = results;
+        nadeoPbCacheAt = now;
+        log(`Fetched ${Object.keys(results).length} Nadeo PBs`);
+        return results;
+    } catch (error) {
+        log(`Error fetching Nadeo PBs: ${error.message}`);
+        return {};
+    }
+}
+
+async function tmioApiRequest(url, authToken) {
+    const headers = {
+        'Authorization': authToken,
+        'User-Agent': 'TrackHunter/1.0',
+    };
+    const response = await httpsRequest(url, { headers });
+    if (response.status === 429) {
+        throw new Error('Rate limited by trackmania.io');
+    }
+    if (response.status !== 200) {
+        throw new Error(`trackmania.io API error (${response.status})`);
+    }
+    return JSON.parse(response.body);
+}
+
+let tmioFetchInProgress = false;
+
+async function fetchTmioPbs(mapUids) {
+    const now = Date.now();
+    if (tmioPbCache && now - tmioPbCacheAt < TMIO_PB_CACHE_TTL_MS) {
+        return tmioPbCache;
+    }
+
+    if (tmioFetchInProgress) {
+        log('TMIO fetch already in progress, skipping');
+        return tmioPbCache || {};
+    }
+
+    const authToken = config.tmioAuthToken;
+    if (!authToken) {
+        return {};
+    }
+
+    tmioFetchInProgress = true;
+
+    const results = {};
+    const CONCURRENCY = 3;
+    const DELAY_BETWEEN_BATCHES_MS = 2000;
+    let rateLimited = false;
+
+    for (let i = 0; i < mapUids.length; i += CONCURRENCY) {
+        if (rateLimited) break;
+
+        const batch = mapUids.slice(i, i + CONCURRENCY);
+        const promises = batch.map(uid =>
+            tmioApiRequest(
+                `${TMIO_API_BASE}/leaderboard/personal/map/${uid}`,
+                authToken
+            ).then(data => ({ uid, data, error: null }))
+             .catch(error => ({ uid, data: null, error }))
+        );
+
+        const settled = await Promise.all(promises);
+
+        for (const { uid, data, error } of settled) {
+            if (error) {
+                if (error.message.includes('Rate limited')) {
+                    log(`TMIO rate limited, stopping PB fetch at map ${uid}`);
+                    rateLimited = true;
+                    break;
+                }
+                log(`TMIO PB fetch failed for map ${uid}: ${error.message}`);
+                continue;
+            }
+            if (data && typeof data.time === 'number' && data.time > 0) {
+                results[uid] = {
+                    time: data.time,
+                    medal: data.medal !== undefined ? data.medal : null,
+                    timestamp: data.timestamp || null,
+                };
+            }
+        }
+
+        if (i + CONCURRENCY < mapUids.length && !rateLimited) {
+            await new Promise(resolve => setTimeout(resolve, DELAY_BETWEEN_BATCHES_MS));
+        }
+    }
+
+    tmioPbCache = results;
+    tmioPbCacheAt = now;
+    tmioFetchInProgress = false;
+    log(`Fetched ${Object.keys(results).length} trackmania.io PBs from ${mapUids.length} maps`);
+    return results;
+}
+
+function stopOAuthServer() {
+    if (oauthServer) {
+        try { oauthServer.close(); } catch {}
+        oauthServer = null;
+    }
+}
+
+function generateRandomState() {
+    return require('crypto').randomBytes(16).toString('hex');
+}
+
+async function exchangeOAuthCode(code, clientId, clientSecret, redirectUri) {
+    const body = new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        client_secret: clientSecret,
+        code: code,
+        redirect_uri: redirectUri,
+    }).toString();
+
+    const response = await httpsRequest(TM_OAUTH_TOKEN, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'User-Agent': 'TrackmaniaMapViewer/1.0',
+        },
+        body,
+    });
+
+    if (response.status !== 200) {
+        throw new Error(`OAuth token exchange failed (${response.status}): ${response.body}`);
+    }
+
+    return JSON.parse(response.body);
+}
+
+async function loginWithUbisoft(email, password) {
+    const { ticket, accountId } = await getUbisoftTicket(email, password);
+    log(`Ubisoft auth successful, accountId: ${accountId}`);
+
+    const token = await getNadeoToken(ticket, 'NadeoServices');
+    nadeoTokens = token;
+    nadeoAccountId = accountId;
+
+    config.nadeoTokens = nadeoTokens;
+    config.nadeoAccountId = accountId;
+    config.nadeoAuthMethod = 'ubisoft';
+    config.nadeoEmail = email;
+    saveConfig();
+
+    nadeoPbCache = null;
+    nadeoPbCacheAt = 0;
+
+    return { success: true, accountId };
+}
+
+async function loginWithOAuth(clientId, clientSecret) {
+    const state = generateRandomState();
+    let port = 0;
+
+    return new Promise((resolve, reject) => {
+        const server = http.createServer(async (req, res) => {
+            clearTimeout(timeout);
+            const url = new URL(req.url, `http://127.0.0.1`);
+            const code = url.searchParams.get('code');
+            const returnedState = url.searchParams.get('state');
+            const error = url.searchParams.get('error');
+
+            if (error) {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end('<html><body><h2>Authorization failed</h2><p>You can close this window.</p></body></html>');
+                server.close();
+                oauthServer = null;
+                reject(new Error(`OAuth error: ${error}`));
+                return;
+            }
+
+            if (returnedState !== state) {
+                res.writeHead(400, { 'Content-Type': 'text/html' });
+                res.end('<html><body><h2>State mismatch - possible CSRF</h2></body></html>');
+                server.close();
+                oauthServer = null;
+                reject(new Error('OAuth state mismatch'));
+                return;
+            }
+
+            if (code) {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end('<html><body><h2>Authorization successful!</h2><p>You can close this window.</p></body></html>');
+                server.close();
+                oauthServer = null;
+
+                try {
+                    const redirectUri = `http://127.0.0.1:${port}/callback`;
+                    const tokens = await exchangeOAuthCode(code, clientId, clientSecret, redirectUri);
+                    config.nadeoOAuthTokens = tokens;
+                    config.nadeoOAuthClientId = clientId;
+                    config.nadeoOAuthClientSecret = clientSecret;
+                    config.nadeoAuthMethod = 'oauth';
+                    saveConfig();
+                    resolve({ success: true });
+                } catch (err) {
+                    reject(err);
+                }
+            } else {
+                res.writeHead(400, { 'Content-Type': 'text/html' });
+                res.end('<html><body><h2>No code received</h2></body></html>');
+                server.close();
+                oauthServer = null;
+                reject(new Error('No authorization code received'));
+            }
+        });
+
+        server.listen(0, '127.0.0.1', () => {
+            port = server.address().port;
+            log(`OAuth callback server listening on port ${port}`);
+            oauthServer = server;
+
+            const redirectUri = `http://127.0.0.1:${port}/callback`;
+            const authUrl = new URL(TM_OAUTH_AUTHORIZE);
+            authUrl.searchParams.set('response_type', 'code');
+            authUrl.searchParams.set('client_id', clientId);
+            authUrl.searchParams.set('scope', '');
+            authUrl.searchParams.set('redirect_uri', redirectUri);
+            authUrl.searchParams.set('state', state);
+
+            shell.openExternal(authUrl.toString());
+            log(`Opened OAuth URL: ${authUrl.toString()}`);
+        });
+
+        const timeout = setTimeout(() => {
+            server.close();
+            oauthServer = null;
+            reject(new Error('OAuth login timed out (5 minutes)'));
+        }, 5 * 60 * 1000);
+
+        server.on('error', (err) => {
+            clearTimeout(timeout);
+            reject(err);
+        });
+    });
+}
+
+async function restoreNadeoSession() {
+    if (config.nadeoAuthMethod === 'ubisoft' && config.nadeoTokens) {
+        nadeoTokens = config.nadeoTokens;
+        nadeoAccountId = config.nadeoAccountId;
+        if (nadeoTokens.refreshToken) {
+            try {
+                await refreshNadeoToken();
+                log('Nadeo session restored via refresh token');
+                return true;
+            } catch (error) {
+                log(`Failed to restore Nadeo session: ${error.message}`);
+            }
+        }
+    }
+    return false;
+}
+
+function logoutNadeo() {
+    nadeoTokens = { accessToken: null, refreshToken: null };
+    nadeoAccountId = null;
+    nadeoPbCache = null;
+    nadeoPbCacheAt = 0;
+    stopOAuthServer();
+    delete config.nadeoTokens;
+    delete config.nadeoAccountId;
+    delete config.nadeoAuthMethod;
+    delete config.nadeoEmail;
+    delete config.nadeoOAuthTokens;
+    delete config.nadeoOAuthClientId;
+    delete config.nadeoOAuthClientSecret;
+    saveConfig();
+}
+
+function isNadeoAuthenticated() {
+    return Boolean(nadeoTokens.accessToken);
 }
 
 function cleanupFile(filePath) {
@@ -422,6 +919,10 @@ function downloadMapFile(url, mapPath, event, mapId, retries = 3) {
 log('Application started');
 
 loadConfig();
+
+restoreNadeoSession().catch((err) => {
+    log(`Startup Nadeo session restore failed: ${err.message}`);
+});
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -747,4 +1248,195 @@ ipcMain.handle('check-clean-marker', async () => {
 
 ipcMain.handle('log', async (event, message) => {
     log(`[Renderer] ${message}`);
+});
+
+ipcMain.handle('nadeo-login-ubisoft', async (event, { email, password }) => {
+    try {
+        const result = await loginWithUbisoft(email, password);
+        return result;
+    } catch (error) {
+        log(`Nadeo Ubisoft login failed: ${error.message}`);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('nadeo-login-oauth', async (event, { clientId, clientSecret }) => {
+    try {
+        const result = await loginWithOAuth(clientId, clientSecret);
+        return result;
+    } catch (error) {
+        log(`Nadeo OAuth login failed: ${error.message}`);
+        stopOAuthServer();
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('nadeo-logout', async () => {
+    logoutNadeo();
+    return { success: true };
+});
+
+ipcMain.handle('nadeo-status', async () => {
+    return {
+        authenticated: isNadeoAuthenticated(),
+        authMethod: config.nadeoAuthMethod || null,
+        accountId: nadeoAccountId,
+    };
+});
+
+ipcMain.handle('nadeo-get-pbs', async (event, { mapUids }) => {
+    try {
+        if (!isNadeoAuthenticated()) {
+            return { success: false, error: 'Not authenticated', pbs: {} };
+        }
+        const pbs = await fetchNadeoPbs(mapUids || []);
+        return { success: true, pbs };
+    } catch (error) {
+        log(`Error fetching Nadeo PBs: ${error.message}`);
+        return { success: false, error: error.message, pbs: {} };
+    }
+});
+
+ipcMain.handle('nadeo-restore-session', async () => {
+    try {
+        const restored = await restoreNadeoSession();
+        return { success: restored };
+    } catch (error) {
+        log(`Nadeo session restore failed: ${error.message}`);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('tmio-get-auth-token', async () => {
+    return config.tmioAuthToken || null;
+});
+
+ipcMain.handle('tmio-save-auth-token', async (event, token) => {
+    try {
+        const trimmed = (token || '').trim();
+        config.tmioAuthToken = trimmed || null;
+        saveConfig();
+        tmioPbCache = null;
+        tmioPbCacheAt = 0;
+        return { success: true };
+    } catch (error) {
+        log(`Error saving TMIO auth token: ${error.message}`);
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('tmio-get-pbs', async (event, { mapUids }) => {
+    try {
+        if (!config.tmioAuthToken) {
+            return { success: false, error: 'Not authenticated', pbs: {} };
+        }
+        const pbs = await fetchTmioPbs(mapUids || []);
+        return { success: true, pbs };
+    } catch (error) {
+        log(`Error fetching trackmania.io PBs: ${error.message}`);
+        return { success: false, error: error.message, pbs: {} };
+    }
+});
+
+ipcMain.handle('tmio-get-pb-single', async (event, { mapUid }) => {
+    try {
+        if (!config.tmioAuthToken) {
+            return { success: false, error: 'Not authenticated' };
+        }
+        if (!mapUid) {
+            return { success: false, error: 'No mapUid provided' };
+        }
+        const data = await tmioApiRequest(
+            `${TMIO_API_BASE}/leaderboard/personal/map/${mapUid}`,
+            config.tmioAuthToken
+        );
+        if (data && typeof data.time === 'number' && data.time > 0) {
+            return {
+                success: true,
+                pb: {
+                    time: data.time,
+                    medal: data.medal !== undefined ? data.medal : null,
+                    timestamp: data.timestamp || null,
+                },
+            };
+        }
+        return { success: true, pb: null };
+    } catch (error) {
+        log(`TMIO PB fetch failed for map ${mapUid}: ${error.message}`);
+        return { success: false, error: error.message };
+    }
+});
+
+let tmioLoginWindow = null;
+
+ipcMain.handle('tmio-login', async () => {
+    return new Promise((resolve) => {
+        if (tmioLoginWindow) {
+            try { tmioLoginWindow.close(); } catch {}
+        }
+
+        tmioLoginWindow = new BrowserWindow({
+            width: 900,
+            height: 700,
+            title: 'Login to trackmania.io',
+            webPreferences: {
+                nodeIntegration: false,
+                contextIsolation: true,
+            },
+        });
+
+        tmioLoginWindow.loadURL('https://trackmania.io');
+
+        let resolved = false;
+        let pollInterval = null;
+
+        function cleanup() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+
+        async function checkForToken() {
+            if (resolved || !tmioLoginWindow || tmioLoginWindow.isDestroyed()) return;
+            try {
+                const token = await tmioLoginWindow.webContents.executeJavaScript(
+                    'localStorage.getItem("tmio-secret")', true
+                );
+                if (token && token.length > 10) {
+                    resolved = true;
+                    cleanup();
+                    config.tmioAuthToken = token;
+                    saveConfig();
+                    tmioPbCache = null;
+                    tmioPbCacheAt = 0;
+                    log('Trackmania.io auth token captured successfully');
+                    try { tmioLoginWindow.close(); } catch {}
+                    tmioLoginWindow = null;
+                    resolve({ success: true });
+                }
+            } catch (e) {
+                // Page may not be loaded yet or cross-origin restriction
+            }
+        }
+
+        pollInterval = setInterval(checkForToken, 1000);
+
+        tmioLoginWindow.webContents.once('did-navigate', () => {
+            checkForToken();
+        });
+
+        tmioLoginWindow.webContents.once('did-finish-load', () => {
+            setTimeout(checkForToken, 2000);
+        });
+
+        tmioLoginWindow.on('closed', () => {
+            cleanup();
+            tmioLoginWindow = null;
+            if (!resolved) {
+                resolved = true;
+                resolve({ success: false, error: 'Login window closed' });
+            }
+        });
+    });
 });

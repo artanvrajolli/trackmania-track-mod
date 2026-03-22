@@ -840,312 +840,6 @@
 
 
 
-        /* Medal Filter Slider */
-
-        .medal-filter-container {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-        }
-
-
-
-        .medal-filter-label {
-
-            color: #aaa;
-
-            font-size: 0.85em;
-
-        }
-
-
-
-         .medal-slider-track-wrap {
-
-            position: relative;
-
-            width: 100%;
-
-            min-width: 200px;
-
-            height: 52px;
-
-            padding-top: 4px;
-
-        }
-
-        .medal-slider-track {
-
-            position: absolute;
-
-            top: 50%;
-
-            left: 9px;
-
-            right: 9px;
-
-            height: 6px;
-
-            transform: translateY(-50%);
-
-            border-radius: 3px;
-
-            background: linear-gradient(to right, 
-
-                rgba(255, 255, 255, 0.3) 0%, 
-
-                rgba(205, 127, 50, 0.3) 25%, 
-
-                rgba(192, 192, 192, 0.3) 50%, 
-
-                rgba(255, 215, 0, 0.3) 75%, 
-
-                rgba(0, 255, 136, 0.3) 100%);
-
-            pointer-events: none;
-
-        }
-
-        .medal-slider {
-
-            position: relative;
-
-            z-index: 1;
-
-            width: 100%;
-
-            height: 22px;
-
-            outline: none;
-
-            -webkit-appearance: none;
-
-            appearance: none;
-
-            cursor: pointer;
-
-            background: transparent;
-
-        }
-
-        .medal-slider::-webkit-slider-thumb {
-
-            -webkit-appearance: none;
-
-            appearance: none;
-
-            width: 18px;
-
-            height: 18px;
-
-            border-radius: 50%;
-
-            background: #00ff88;
-
-            cursor: pointer;
-
-            border: 2px solid #1a1a2e;
-
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-
-            transition: all 0.2s;
-
-            margin-top: 0;
-
-        }
-
-        .medal-slider::-webkit-slider-thumb:hover {
-
-            transform: scale(1.1);
-
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
-
-        }
-        
-        .medal-slider::-webkit-slider-runnable-track {
-
-            height: 6px;
-
-        }
-
-        .medal-slider::-moz-range-thumb {
-
-            width: 18px;
-
-            height: 18px;
-
-            border-radius: 50%;
-
-            background: #00ff88;
-
-            cursor: pointer;
-
-            border: 2px solid #1a1a2e;
-
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-
-            transition: all 0.2s;
-
-        }
-
-        .medal-slider::-moz-range-thumb:hover {
-
-            transform: scale(1.1);
-
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
-
-        }
-
-        .medal-slider::-moz-range-track {
-
-            height: 6px;
-
-            background: transparent;
-
-            border: none;
-
-        }
-
-        .medal-label {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            font-size: 0.75em;
-
-            color: #666;
-
-            transition: all 0.2s;
-
-            cursor: pointer;
-
-            padding: 2px 4px;
-
-            border-radius: 3px;
-
-            user-select: none; /* Prevent text selection */
-
-        }
-
-
-
-        .medal-label.active {
-
-            color: #00ff88;
-
-            background: rgba(0, 255, 136, 0.1);
-
-            font-weight: bold;
-
-        }
-
-
-
-        .medal-label:hover {
-
-            color: #00ff88;
-
-            background: rgba(0, 255, 136, 0.05);
-
-            transform: translateY(-1px);
-
-        }
-
-        .medal-track-markers {
-
-            position: absolute;
-
-            top: 0;
-
-            left: 0;
-
-            right: 0;
-
-            bottom: 0;
-
-            pointer-events: none;
-
-        }
-
-        .medal-track-marker {
-
-            position: absolute;
-
-            top: 50%;
-
-            transform: translate(-50%, -50%);
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            gap: 2px;
-
-            pointer-events: auto;
-
-            cursor: pointer;
-
-        }
-
-        .medal-track-marker .marker-img {
-
-            width: 16px;
-
-            height: 16px;
-
-            opacity: 0.7;
-
-            transition: opacity 0.2s, transform 0.2s;
-
-        }
-
-        .medal-track-marker .marker-label {
-
-            font-size: 0.65em;
-
-            color: #666;
-
-            transition: color 0.2s;
-
-        }
-
-        .medal-track-marker:hover .marker-img {
-
-            opacity: 1;
-
-            transform: scale(1.15);
-
-        }
-
-        .medal-track-marker:hover .marker-label {
-
-            color: #00ff88;
-
-        }
-
-        .medal-track-marker.active .marker-img {
-
-            opacity: 1;
-
-        }
-
-        .medal-track-marker.active .marker-label {
-
-            color: #00ff88;
-
-            font-weight: bold;
-
-        }
-
-
-
         .map-image {
 
             width: 100%;
@@ -1399,6 +1093,28 @@
         .personal-best.empty .personal-best-time {
 
             color: #666;
+
+        }
+
+        .personal-best.loading .pb-spinner {
+
+            width: 12px;
+
+            height: 12px;
+
+            border: 2px solid rgba(0, 255, 136, 0.2);
+
+            border-top-color: #00ff88;
+
+            border-radius: 50%;
+
+            animation: pb-spin 0.8s linear infinite;
+
+        }
+
+        @keyframes pb-spin {
+
+            to { transform: rotate(360deg); }
 
         }
 
@@ -2208,6 +1924,32 @@
 
         }
 
+        .settings-group details {
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            border-radius: 6px;
+
+            padding: 8px 12px;
+
+            margin-bottom: 4px;
+
+        }
+
+        .settings-group details[open] {
+
+            padding-bottom: 12px;
+
+        }
+
+        .settings-group summary {
+
+            font-size: 13px;
+
+            user-select: none;
+
+        }
+
 
 
         .settings-actions {
@@ -2804,7 +2546,7 @@
 
                 <div class="settings-tooltip" id="settingsTooltip">
 
-                    Add a TMX username to unlock medal filtering features and see your personal bests!
+                    Add your trackmania.io auth token to see your personal bests!
 
                 </div>
 
@@ -2917,62 +2659,6 @@
                     <div class="season-toggle active" id="seasonSummer" onclick="toggleSeasonFilter('Summer')" title="Summer"><span class="icon">☀️</span><span class="count" id="countSummer">0</span></div>
 
                     <div class="season-toggle active" id="seasonAutumn" onclick="toggleSeasonFilter('Autumn')" title="Fall"><span class="icon">🍂</span><span class="count" id="countAutumn">0</span></div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- Medal Filter -->
-
-            <div class="medal-filter-container" id="medalFilterContainer" style="display: none;">
-
-                <span class="medal-filter-label">Unbeaten:</span>
-
-                <div class="medal-slider-container">
-
-                    <div class="medal-slider-track-wrap">
-
-                        <div class="medal-slider-track"></div>
-
-                        <input type="range" id="medalSlider" min="0" max="4" value="0" class="medal-slider" oninput="updateMedalFilter(this.value)">
-
-                        <div class="medal-track-markers">
-
-                            <span class="medal-track-marker active" data-value="0" style="left: calc(0% + 9px)" onclick="setMedalFilter(0)">
-
-                                <span class="marker-label">All</span>
-
-                            </span>
-
-                            <span class="medal-track-marker" data-value="1" style="left: calc(25% + 4.5px)" onclick="setMedalFilter(1)">
-
-                                <img class="marker-img" src="img/medals/bronze.png" alt="Bronze">
-
-                            </span>
-
-                            <span class="medal-track-marker" data-value="2" style="left: 50%" onclick="setMedalFilter(2)">
-
-                                <img class="marker-img" src="img/medals/silver.png" alt="Silver">
-
-                            </span>
-
-                            <span class="medal-track-marker" data-value="3" style="left: calc(75% - 4.5px)" onclick="setMedalFilter(3)">
-
-                                <img class="marker-img" src="img/medals/gold.png" alt="Gold">
-
-                            </span>
-
-                            <span class="medal-track-marker" data-value="4" style="left: calc(100% - 9px)" onclick="setMedalFilter(4)">
-
-                                <img class="marker-img" src="img/medals/author.png" alt="Author">
-
-                            </span>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
@@ -3096,19 +2782,51 @@
 
             <div class="settings-group">
 
-                <label>TMX Username or User ID</label>
+                <label>Personal Bests (trackmania.io)</label>
 
-                <div class="path-input-group">
+                <div id="tmioSection">
 
-                    <input type="text" id="tmxUserInput" placeholder="e.g. Wirtual or 17372">
+                    <div id="tmioNotConnected">
 
-                    <button onclick="saveTmxUserSettings()">Save</button>
+                        <div class="path-input-group" style="margin-bottom: 8px;">
+
+                            <button onclick="tmioLogin()" id="tmioLoginBtn" style="flex: 1;">Login to trackmania.io</button>
+
+                        </div>
+
+                        <details>
+
+                            <summary style="cursor: pointer; color: var(--text-secondary, #aaa); margin-bottom: 8px;">Or enter auth token manually</summary>
+
+                            <div class="settings-help-text" style="margin-bottom: 8px;">In the trackmania.io browser tab, open DevTools (F12), run <code style="background: #333; padding: 2px 6px; border-radius: 3px;">localStorage.getItem("tmio-secret")</code> in Console, and paste the result below.</div>
+
+                            <div class="path-input-group">
+
+                                <input type="password" id="tmioAuthTokenInput" placeholder="trackmania.io auth token">
+
+                                <button onclick="saveTmioAuthToken()" id="tmioSaveBtn">Save</button>
+
+                            </div>
+
+                        </details>
+
+                    </div>
+
+                    <div id="tmioConnected" style="display: none;">
+
+                        <div class="path-input-group">
+
+                            <span style="color: var(--success-color, #4caf50); flex: 1;">Connected to trackmania.io</span>
+
+                            <button class="settings-danger-btn" onclick="clearTmioAuthToken()" style="padding: 4px 12px;">Disconnect</button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="settings-help-text">Enter a TMX username or numeric User ID to fetch your personal bests. The username will be tested before saving.</div>
-
-                <div id="tmxSettingsStatus" class="settings-status"></div>
+                <div id="tmioSettingsStatus" class="settings-status"></div>
 
             </div>
 
@@ -3176,11 +2894,7 @@
 
         const DEFAULT_FIELDS_BASE = 'MapId%2CMapUid%2CName%2CAuthors%5B%5D%2CEnvironment%2CType%2CTags%5B%5D%2CLength%2CDifficulty%2CRoutes%2CAwardCount%2CDownloadCount%2CReplayCount%2CTrackValue%2CIsPublic%2CIsListed%2CVehicle%2CVehicleName%2CHasImages%2CReplayType%2CHasCoauthorRequest%2CAuthorBeaten%2COnlineWR%2CMedals.Bronze%2CMedals.Silver%2CMedals.Gold%2CMedals.Author';
 
-        const DEFAULT_FIELDS_WITH_PB = 'MapId%2CMapUid%2CName%2CAuthors%5B%5D%2CEnvironment%2CType%2CTags%5B%5D%2CLength%2CDifficulty%2CRoutes%2CAwardCount%2CDownloadCount%2CReplayCount%2CTrackValue%2CIsPublic%2CIsListed%2CVehicle%2CVehicleName%2CHasImages%2CReplayType%2CHasCoauthorRequest%2CAuthorBeaten%2COnlineWR%2CUserOnlineRecord.RecordTime%2CUserRecord.ReplayTime%2CMedals.Bronze%2CMedals.Silver%2CMedals.Gold%2CMedals.Author';
-
         const DEFAULT_PARAMS_BASE = `author=Ubisoft+Nadeo&order1=6&count=1000&fields=${DEFAULT_FIELDS_BASE}`;
-
-        const DEFAULT_PARAMS_WITH_PB = `author=Ubisoft+Nadeo&order1=6&count=1000&fields=${DEFAULT_FIELDS_WITH_PB}`;
 
         const TRACK_HISTORY_KEY = 'trackLaunchHistory';
 
@@ -3207,13 +2921,11 @@
 
         let activeLaunch = null;
 
-        let canRequestPersonalBest = true;
+        let tmioAuthToken = null;
 
-        let tmxUserName = '';
+        let tmioAuthenticated = false;
 
-        let tmxUserId = null;
-
-        let localPersonalBests = {};
+        let tmioPbs = {};
 
         let preprocessedMaps = null;
 
@@ -3248,10 +2960,6 @@
             Autumn: true
 
         };
-
-
-
-        let medalFilter = 0; // 0 = All (show all), 1 = Haven't beaten Bronze, 2 = Haven't beaten Silver, 3 = Haven't beaten Gold, 4 = Haven't beaten Author
 
 
 
@@ -3309,8 +3017,6 @@
 
                 seasonFilters,
 
-                medalFilter,
-
                 historyLimit
 
             };
@@ -3344,8 +3050,6 @@
                     if (saved.colorFilters) Object.assign(colorFilters, saved.colorFilters);
 
                     if (saved.seasonFilters) Object.assign(seasonFilters, saved.seasonFilters);
-
-                    if (saved.medalFilter !== undefined) medalFilter = saved.medalFilter;
 
                     if (saved.historyLimit !== undefined) historyLimit = saved.historyLimit;
 
@@ -3415,20 +3119,6 @@
 
             document.getElementById('seasonAutumn').classList.toggle('active', seasonFilters.Autumn);
 
-            
-
-            // Apply medal filter state
-
-            const medalSlider = document.getElementById('medalSlider');
-
-            if (medalSlider) {
-
-                medalSlider.value = medalFilter;
-
-                updateMedalFilter(medalFilter, false); // false = don't save state
-
-            }
-
         }
 
 
@@ -3483,37 +3173,17 @@
 
 
 
-        function buildApiUrl(options = {}) {
-
-            const includePersonalBest = options.includePersonalBest !== false;
-
-            const replaysBy = options.replaysBy || options.tmxUserId || null;
+        function buildApiUrl() {
 
             const selectedYear = document.getElementById('yearRange').value;
 
-            
-
-            const params = includePersonalBest ? DEFAULT_PARAMS_WITH_PB : DEFAULT_PARAMS_BASE;
-
-            let url = `${API_URL_BASE}?${params}`;
-
-
-
-            if (replaysBy) {
-
-                url += `&replaysby=${encodeURIComponent(replaysBy)}`;
-
-            }
-
-            
+            let url = `${API_URL_BASE}?${DEFAULT_PARAMS_BASE}`;
 
             if (selectedYear) {
 
                 url += `&uploadedafter=${selectedYear}-01-01&uploadedbefore=${selectedYear}-12-31`;
 
             }
-
-            
 
             return url;
 
@@ -3571,82 +3241,6 @@
 
 
 
-        // Update medal filter
-
-        function updateMedalFilter(value, saveState = true) {
-
-            medalFilter = parseInt(value, 10);
-
-            
-
-            // Update slider value
-
-            const medalSlider = document.getElementById('medalSlider');
-
-            if (medalSlider) {
-
-                medalSlider.value = medalFilter;
-
-            }
-
-            
-
-            // Update label highlights
-
-            const markers = document.querySelectorAll('.medal-track-marker');
-
-            markers.forEach(marker => {
-
-                const markerValue = parseInt(marker.getAttribute('data-value'), 10);
-
-                marker.classList.toggle('active', markerValue <= medalFilter);
-
-            });
-
-            
-
-            if (saveState) {
-
-                saveFilterState();
-
-                applyFilters();
-
-            }
-
-        }
-
-
-
-        // Set medal filter directly (for label clicks)
-
-        function setMedalFilter(value) {
-
-            updateMedalFilter(value, true);
-
-        }
-
-
-
-        // Show/hide medal filter based on TMX user
-
-        function updateMedalFilterVisibility() {
-
-            const medalContainer = document.getElementById('medalFilterContainer');
-
-            const hasTmxUser = tmxUserName || tmxUserId;
-
-            
-
-            if (medalContainer) {
-
-                medalContainer.style.display = hasTmxUser ? 'flex' : 'none';
-
-            }
-
-        }
-
-
-
         // Update settings badge based on TMX user status
 
         function updateSettingsBadge() {
@@ -3655,23 +3249,15 @@
 
             const tooltip = document.getElementById('settingsTooltip');
 
-            const hasTmxUser = tmxUserName || tmxUserId;
-
-            
-
             if (badge && tooltip) {
 
-                if (hasTmxUser) {
-
-                    // Hide badge when TMX user is configured
+                if (tmioAuthenticated) {
 
                     badge.style.display = 'none';
 
                     tooltip.style.display = 'none';
 
                 } else {
-
-                    // Show badge when no TMX user is configured
 
                     badge.style.display = 'flex';
 
@@ -3783,339 +3369,175 @@
 
 
 
-        function setTmxSettingsStatus(message, type) {
+        function setTmioSettingsStatus(message, type) {
 
-            const status = document.getElementById('tmxSettingsStatus');
+            const status = document.getElementById('tmioSettingsStatus');
 
-            if (!status) return;
+            if (status) {
 
-            status.textContent = message || '';
+                status.textContent = message;
 
-            status.className = 'settings-status';
-
-            if (type) {
-
-                status.classList.add(type);
+                status.className = 'settings-status' + (type ? ` ${type}` : '');
 
             }
 
         }
 
-
-
-        async function loadTmxUserSettings() {
+        async function loadTmioStatus() {
 
             try {
 
-                const saved = await window.electronAPI.getTmxUser();
+                tmioAuthToken = await window.electronAPI.tmioGetAuthToken();
 
-                if (saved) {
+                tmioAuthenticated = !!tmioAuthToken;
 
-                    tmxUserName = (saved.name || '').toString();
+                const notConnected = document.getElementById('tmioNotConnected');
 
-                    tmxUserId = saved.userId || null;
+                const connected = document.getElementById('tmioConnected');
 
-                    const input = document.getElementById('tmxUserInput');
+                if (tmioAuthenticated) {
 
-                    if (input) {
+                    if (notConnected) notConnected.style.display = 'none';
 
-                        input.value = tmxUserName || (tmxUserId ? String(tmxUserId) : '');
-
-                    }
-
-                }
-
-                // Update medal filter visibility after loading TMX user
-
-                updateMedalFilterVisibility();
-
-                // Update settings badge based on TMX user status
-
-                updateSettingsBadge();
-
-            } catch (error) {
-
-                window.electronAPI.log(`Failed to load TMX user settings: ${error.message}`);
-
-            }
-
-        }
-
-
-
-        async function loadLocalPersonalBests() {
-
-            try {
-
-                const result = await window.electronAPI.getLocalPbs();
-
-                if (result && result.success) {
-
-                    localPersonalBests = result.pbs || {};
-
-                    window.electronAPI.log(`Loaded ${Object.keys(localPersonalBests).length} local PBs`);
+                    if (connected) connected.style.display = 'block';
 
                 } else {
 
-                    localPersonalBests = {};
+                    if (notConnected) notConnected.style.display = 'block';
 
-                    if (result && result.error) {
-
-                        window.electronAPI.log(`Failed to load local PBs: ${result.error}`);
-
-                    }
+                    if (connected) connected.style.display = 'none';
 
                 }
 
             } catch (error) {
 
-                localPersonalBests = {};
-
-                window.electronAPI.log(`Failed to load local PBs: ${error.message}`);
+                window.electronAPI.log(`Failed to load trackmania.io status: ${error.message}`);
 
             }
+
+            updateSettingsBadge();
 
         }
 
+        async function saveTmioAuthToken() {
 
-
-        async function lookupTmxUserId(rawValue, options = {}) {
-
-            const value = (rawValue || '').trim();
-
-            const cacheResult = options.cache === true;
-
-
-
-            if (!value) {
-
-                return { userId: null, name: '', exact: false };
-
-            }
-
-
-
-            if (/^\d+$/.test(value)) {
-
-                const numericId = parseInt(value, 10);
-
-                if (!Number.isNaN(numericId)) {
-
-                    if (cacheResult) {
-
-                        tmxUserId = numericId;
-
-                    }
-
-                    return { userId: numericId, name: value, exact: true };
-
-                }
-
-            }
-
-
-
-            try {
-
-                const url = `https://trackmania.exchange/api/users?name=${encodeURIComponent(value)}&fields=UserId%2CName&count=20`;
-
-                const response = await fetch(url);
-
-                if (!response.ok) {
-
-                    window.electronAPI.log(`TMX user lookup failed: HTTP ${response.status}`);
-
-                    return { userId: null, name: value, exact: false };
-
-                }
-
-                const data = await response.json();
-
-                const results = Array.isArray(data?.Results) ? data.Results : [];
-
-                if (!results.length) {
-
-                    return { userId: null, name: value, exact: false };
-
-                }
-
-                const exactMatch = results.find(user => (user.Name || '').toLowerCase() === value.toLowerCase());
-
-                const resolved = exactMatch || results[0];
-
-                if (resolved?.UserId) {
-
-                    if (cacheResult) {
-
-                        tmxUserId = resolved.UserId;
-
-                    }
-
-                    return {
-
-                        userId: resolved.UserId,
-
-                        name: resolved.Name || value,
-
-                        exact: Boolean(exactMatch)
-
-                    };
-
-                }
-
-            } catch (error) {
-
-                window.electronAPI.log(`TMX user lookup error: ${error.message}`);
-
-            }
-
-
-
-            return { userId: null, name: value, exact: false };
-
-        }
-
-
-
-        async function resolveTmxUserId() {
-
-            const rawValue = (tmxUserName || '').trim();
-
-            if (!rawValue) {
-
-                tmxUserId = null;
-
-                return null;
-
-            }
-
-
-
-            if (tmxUserId && !/^\d+$/.test(rawValue)) {
-
-                return tmxUserId;
-
-            }
-
-
-
-            const resolved = await lookupTmxUserId(rawValue, { cache: true });
-
-            if (resolved.userId) {
-
-                await window.electronAPI.saveTmxUser({ name: rawValue, userId: resolved.userId });
-
-                return resolved.userId;
-
-            }
-
-
-
-            return null;
-
-        }
-
-
-
-        async function saveTmxUserSettings() {
-
-            const input = document.getElementById('tmxUserInput');
+            const input = document.getElementById('tmioAuthTokenInput');
 
             if (!input) return;
 
+            const token = input.value.trim();
 
+            if (!token) {
 
-            const value = input.value.trim();
+                setTmioSettingsStatus('Please enter an auth token.', 'error');
 
-            setTmxSettingsStatus('', '');
+                return;
 
+            }
 
+            setTmioSettingsStatus('Saving token...', '');
 
-            if (!value) {
+            try {
 
-                tmxUserName = '';
+                const result = await window.electronAPI.tmioSaveAuthToken(token);
 
-                tmxUserId = null;
+                if (result.success) {
 
-                const result = await window.electronAPI.saveTmxUser({ name: '', userId: null });
+                    tmioAuthToken = token;
 
-                if (result && result.success === false) {
+                    tmioAuthenticated = true;
 
-                    setTmxSettingsStatus(result.error || 'Failed to clear TMX user.', 'error');
+                    setTmioSettingsStatus('Token saved successfully!', 'success');
 
-                    return;
+                    await loadTmioStatus();
+
+                    fetchMaps();
+
+                } else {
+
+                    setTmioSettingsStatus(result.error || 'Failed to save token.', 'error');
 
                 }
 
-                setTmxSettingsStatus('TMX user cleared. PBs will be hidden.', 'success');
+            } catch (error) {
 
-                updateMedalFilterVisibility(); // Hide medal filter
-
-                updateSettingsBadge(); // Show badge again
-
-                fetchMaps();
-
-                return;
+                setTmioSettingsStatus(`Error: ${error.message}`, 'error');
 
             }
 
+        }
 
+        async function tmioLogin() {
 
-            // Test the username first
+            const btn = document.getElementById('tmioLoginBtn');
 
-            setTmxSettingsStatus('Testing TMX user lookup...', '');
+            if (btn) {
 
-            const resolved = await lookupTmxUserId(value, { cache: false });
+                btn.disabled = true;
 
-            
-
-            if (!resolved.userId) {
-
-                setTmxSettingsStatus('No TMX user found for that value. Please check the username or User ID.', 'error');
-
-                return;
+                btn.textContent = 'Logging in...';
 
             }
 
+            setTmioSettingsStatus('Waiting for login...', '');
 
+            try {
 
-            // If we get here, the test passed, so save the user
+                const result = await window.electronAPI.tmioLogin();
 
-            tmxUserName = value;
+                if (result.success) {
 
-            tmxUserId = /^\d+$/.test(value) ? parseInt(value, 10) : resolved.userId;
+                    tmioAuthenticated = true;
 
-            const result = await window.electronAPI.saveTmxUser({ name: tmxUserName, userId: tmxUserId });
+                    tmioAuthToken = await window.electronAPI.tmioGetAuthToken();
 
-            if (result && result.success === false) {
+                    setTmioSettingsStatus('Logged in successfully!', 'success');
 
-                setTmxSettingsStatus(result.error || 'Failed to save TMX user.', 'error');
+                    await loadTmioStatus();
 
-                return;
+                    fetchMaps();
+
+                } else {
+
+                    setTmioSettingsStatus(result.error || 'Login failed.', 'error');
+
+                }
+
+            } catch (error) {
+
+                setTmioSettingsStatus(`Error: ${error.message}`, 'error');
+
+            } finally {
+
+                if (btn) {
+
+                    btn.disabled = false;
+
+                    btn.textContent = 'Login to trackmania.io';
+
+                }
 
             }
 
+        }
 
+        async function clearTmioAuthToken() {
 
-            // Show success message with user info
+            await window.electronAPI.tmioSaveAuthToken('');
 
-            if (/^\d+$/.test(value)) {
+            tmioAuthToken = null;
 
-                setTmxSettingsStatus(`TMX user ID ${resolved.userId} validated and saved.`, 'success');
+            tmioAuthenticated = false;
 
-            } else {
+            tmioPbs = {};
 
-                const matchNote = resolved.exact ? 'Exact match' : 'Closest match';
+            const input = document.getElementById('tmioAuthTokenInput');
 
-                setTmxSettingsStatus(`${matchNote}: ${resolved.name} (User ID ${resolved.userId}) - Saved successfully!`, 'success');
+            if (input) input.value = '';
 
-            }
+            setTmioSettingsStatus('Disconnected.', '');
 
-            
-
-            updateMedalFilterVisibility(); // Show medal filter
-
-            updateSettingsBadge(); // Hide badge
+            await loadTmioStatus();
 
             fetchMaps();
 
@@ -4257,12 +3679,8 @@
 
             let pb = (typeof item.pbTime === 'number' && item.pbTime > 0) ? item.pbTime : null;
 
-            if (item.mapUid && localPersonalBests[item.mapUid]) {
-
-                const localPb = (typeof localPersonalBests[item.mapUid] === 'number' && localPersonalBests[item.mapUid] > 0) ? localPersonalBests[item.mapUid] : null;
-
-                if (localPb && (!pb || localPb < pb)) pb = localPb;
-
+            if (item.mapUid && tmioPbs[item.mapUid] && typeof tmioPbs[item.mapUid].time === 'number' && tmioPbs[item.mapUid].time > 0) {
+                if (!pb || tmioPbs[item.mapUid].time < pb) pb = tmioPbs[item.mapUid].time;
             }
 
             return pb;
@@ -4812,43 +4230,13 @@ async function fetchMaps() {
 
             try {
 
-                await loadLocalPersonalBests();
+                const url = buildApiUrl();
 
-                const resolvedUserId = tmxUserName ? await resolveTmxUserId() : null;
+                window.electronAPI.log(`Fetching maps from: ${url}`);
 
-                if (tmxUserName && !resolvedUserId) {
-
-                    setTmxSettingsStatus('TMX user not found. PBs unavailable.', 'error');
-
-                }
-
-
-
-                const urlWithPb = buildApiUrl({ includePersonalBest: canRequestPersonalBest, replaysBy: resolvedUserId });
-
-                window.electronAPI.log(`Fetching maps from: ${urlWithPb}`);
-
-                let response = await fetch(urlWithPb);
+                const response = await fetch(url);
 
                 window.electronAPI.log(`Maps API response status: ${response.status}`);
-
-
-
-                if (!response.ok && response.status === 400 && canRequestPersonalBest) {
-
-                    canRequestPersonalBest = false;
-
-                    const fallbackUrl = buildApiUrl({ includePersonalBest: false, replaysBy: resolvedUserId });
-
-                    window.electronAPI.log(`PB fields rejected, retrying without PB fields: ${fallbackUrl}`);
-
-                    response = await fetch(fallbackUrl);
-
-                    window.electronAPI.log(`Maps API response status (fallback): ${response.status}`);
-
-                }
-
-
 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
@@ -4859,6 +4247,9 @@ async function fetchMaps() {
                 allMaps = data.Results || [];
 
                 window.electronAPI.log(`Received ${allMaps.length} maps from API`);
+
+
+                // trackmania.io PBs are fetched lazily via IntersectionObserver in displayMaps()
 
                 
 
@@ -4922,8 +4313,6 @@ async function fetchMaps() {
 
             const hasSeasonFilter = Object.values(seasonFilters).some(v => !v);
 
-            const hasMedalFilter = (tmxUserName || tmxUserId) && medalFilter > 0;
-
             // Single-pass filter combining all conditions
 
             filtered = filtered.filter(({ map, lowerName, colorIndex, season }) => {
@@ -4935,26 +4324,6 @@ async function fetchMaps() {
                 if (!allColorActive && !colorFilters[colorIndex]) return false;
 
                 if (hasSeasonFilter && season && !seasonFilters[season]) return false;
-
-                if (hasMedalFilter) {
-
-                    const pbTime = getPersonalBestTime(map);
-
-                    const medals = map.Medals;
-
-                    const targetTime = medalFilter === 1 ? normalizeRecordTime(medals?.Bronze)
-
-                        : medalFilter === 2 ? normalizeRecordTime(medals?.Silver)
-
-                        : medalFilter === 3 ? normalizeRecordTime(medals?.Gold)
-
-                        : normalizeRecordTime(medals?.Author);
-
-                    if (targetTime && pbTime && pbTime <= targetTime) return false;
-
-                    if (!targetTime) return false;
-
-                }
 
                 return true;
 
@@ -5113,6 +4482,118 @@ async function fetchMaps() {
             ['author', MEDAL_SVG.author, 'Author']
         ];
 
+        let tmioObserver = null;
+        let tmioFetchQueue = new Set();
+        let tmioFetchInProgress = false;
+        let tmioLoadingUids = new Set();
+        let tmioNoRecordUids = new Set();
+
+        function setupTmioObserver() {
+            if (tmioObserver) {
+                tmioObserver.disconnect();
+            }
+            if (!tmioAuthenticated) return;
+
+            tmioObserver = new IntersectionObserver((entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        const card = entry.target;
+                        const mapUid = card.getAttribute('data-map-uid');
+                        const mapId = card.getAttribute('data-map-id');
+                        if (mapUid && !tmioPbs[mapUid] && !tmioFetchQueue.has(mapUid)) {
+                            tmioFetchQueue.add(mapUid);
+                            tmioLoadingUids.add(mapUid);
+                            tmioObserver.unobserve(card);
+                        }
+                    }
+                }
+                if (!tmioFetchInProgress) {
+                    processTmioQueue();
+                }
+            }, {
+                rootMargin: '200px',
+                threshold: 0,
+            });
+
+            document.querySelectorAll('.map-card[data-map-uid]').forEach(card => {
+                const mapUid = card.getAttribute('data-map-uid');
+                if (mapUid && !tmioPbs[mapUid]) {
+                    tmioObserver.observe(card);
+                }
+            });
+        }
+
+        async function processTmioQueue() {
+            if (tmioFetchInProgress || tmioFetchQueue.size === 0) return;
+            tmioFetchInProgress = true;
+
+            const BATCH_SIZE = 3;
+            const DELAY_MS = 400;
+
+            while (tmioFetchQueue.size > 0) {
+                const batch = [];
+                for (const uid of tmioFetchQueue) {
+                    batch.push(uid);
+                    tmioFetchQueue.delete(uid);
+                    if (batch.length >= BATCH_SIZE) break;
+                }
+
+                const promises = batch.map(mapUid =>
+                    window.electronAPI.tmioGetPbSingle({ mapUid })
+                        .then(result => ({ mapUid, result }))
+                        .catch(error => ({ mapUid, result: { success: false, error: error.message } }))
+                );
+
+                const settled = await Promise.all(promises);
+
+                for (const { mapUid, result } of settled) {
+                    tmioLoadingUids.delete(mapUid);
+                    if (result.success && result.pb) {
+                        tmioPbs[mapUid] = result.pb;
+                    } else {
+                        tmioNoRecordUids.add(mapUid);
+                    }
+                    updateMapCardPb(mapUid);
+                }
+
+                if (tmioFetchQueue.size > 0) {
+                    await new Promise(r => setTimeout(r, DELAY_MS));
+                }
+            }
+
+            tmioFetchInProgress = false;
+        }
+
+        function updateMapCardPb(mapUid) {
+            const card = document.querySelector(`.map-card[data-map-uid="${mapUid}"]`);
+            if (!card) return;
+
+            const map = allMaps.find(m => m.MapUid === mapUid);
+            if (!map) return;
+
+            const pbTime = getPersonalBestTime(map);
+            const medals = map.Medals || {};
+            const medalHtml = _medalMeta.map(([key, icon, prop]) =>
+                buildMedalHtml(pbTime, key, medals[prop], icon)
+            ).join('');
+            const pbHtml = renderPersonalBest(map, pbTime);
+
+            const medalsRow = card.querySelector('.medals-row');
+            if (medalsRow) medalsRow.innerHTML = medalHtml;
+
+            let pbEl = card.querySelector('.personal-best');
+            if (pbHtml) {
+                if (pbEl) {
+                    pbEl.outerHTML = pbHtml;
+                } else {
+                    const clickHint = card.querySelector('.click-hint');
+                    if (clickHint) clickHint.insertAdjacentHTML('beforebegin', pbHtml);
+                }
+            } else if (pbEl) {
+                pbEl.remove();
+            }
+        }
+
         function displayMaps(maps) {
 
             const content = document.getElementById('content');
@@ -5173,11 +4654,13 @@ async function fetchMaps() {
 
                 const replays = map.ReplayCount || 0;
 
-                const pbHtml = renderPersonalBest(map, pbTime);
+                const pbHtml = renderPersonalBest(map, pbTime, tmioAuthenticated);
+
+                const mapUid = map.MapUid || '';
 
                 return `
 
-                <div class="map-card ${borderClass}" onclick="handleMapClick(event, '${map.MapId}', '${nameAttr}')">
+                <div class="map-card ${borderClass}" onclick="handleMapClick(event, '${map.MapId}', '${nameAttr}')" data-map-uid="${mapUid}" data-map-id="${map.MapId}">
 
                     ${isCached ? _cachedSvgHtml : ''}
 
@@ -5226,6 +4709,8 @@ async function fetchMaps() {
 
 
             content.innerHTML = html;
+
+            setupTmioObserver();
 
         }
 
@@ -5313,17 +4798,10 @@ async function fetchMaps() {
 
         function getPersonalBestTime(map) {
 
-            const localPb = map?.MapUid ? localPersonalBests[map.MapUid] : null;
+            const mapUid = map?.MapUid;
+            const tmioPb = mapUid && tmioPbs[mapUid] ? tmioPbs[mapUid].time : null;
 
-            return normalizeRecordTime(map?.UserOnlineRecord?.RecordTime)
-
-                || normalizeRecordTime(map?.UserRecord?.ReplayTime)
-
-                || normalizeRecordTime(map?.UserOnlineRecord)
-
-                || normalizeRecordTime(map?.UserRecord)
-
-                || normalizeRecordTime(localPb);
+            return normalizeRecordTime(tmioPb);
 
         }
 
@@ -5353,11 +4831,32 @@ async function fetchMaps() {
 
 
 
-        function renderPersonalBest(map, precomputedPb) {
+        function renderPersonalBest(map, precomputedPb, loading) {
 
             const pbTime = precomputedPb !== undefined ? precomputedPb : getPersonalBestTime(map);
+            const mapUid = map?.MapUid;
 
-            if (!tmxUserName && !tmxUserId && !pbTime) return '';
+            if (!tmioAuthenticated && !pbTime) return '';
+
+            if (mapUid && tmioNoRecordUids.has(mapUid) && !pbTime) return '';
+
+            const alreadyFetched = mapUid && (tmioPbs[mapUid] || tmioNoRecordUids.has(mapUid));
+
+            if (loading && !pbTime && !alreadyFetched) {
+
+                return `
+
+                    <div class="personal-best loading">
+
+                        <span class="personal-best-label">PB</span>
+
+                        <div class="pb-spinner"></div>
+
+                    </div>
+
+                `;
+
+            }
 
             const displayTime = pbTime ? formatTime(pbTime) : '--:--';
 
@@ -5376,6 +4875,7 @@ async function fetchMaps() {
             `;
 
         }
+
 
 
 
@@ -5433,7 +4933,9 @@ async function fetchMaps() {
 
             await loadFilterState();
 
-            await loadTmxUserSettings();
+            await loadTmioStatus();
+
+            updateSettingsBadge();
 
             loadTrackHistory();
 
@@ -5443,29 +4945,25 @@ async function fetchMaps() {
 
             applyFilterStateToUI();
 
-            
+            // Add Enter key support for trackmania.io auth token input
 
-            // Add Enter key support for TMX username input
+            const tmioInput = document.getElementById('tmioAuthTokenInput');
 
-            const tmxInput = document.getElementById('tmxUserInput');
+            if (tmioInput) {
 
-            if (tmxInput) {
-
-                tmxInput.addEventListener('keypress', (e) => {
+                tmioInput.addEventListener('keypress', (e) => {
 
                     if (e.key === 'Enter') {
 
                         e.preventDefault();
 
-                        saveTmxUserSettings();
+                        saveTmioAuthToken();
 
                     }
 
                 });
 
             }
-
-            
 
             // Check for clean marker and clear history if present
 
